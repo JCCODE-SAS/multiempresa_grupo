@@ -1,0 +1,37 @@
+{% comment %}
+    Este archivo HTML define la plantilla para la página de 
+    restablecimiento de contraseña. 
+    Los usuarios que hayan solicitado la recuperación de contraseña 
+    serán dirigidos a esta página
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Se incluye la hoja de estilos de Bootstrap -->
+</head>
+<body class="bg-light">       
+    <div class="container mt-5">
+        <div class="row justify-content-center"> <!-- Se crea una fila y se centra -->
+            <div class="col-md-6">  <!-- Se crea una columna de 6 -->
+                <div class="card p-4 shadow"> <!-- Se crea una tarjeta con un padding de 4 y una sombra -->
+                    <h2 class="mb-4 text-center">Restablecer Contraseña</h2> <!-- Se crea un título centrado -->
+                    <form method="post"> <!-- Se crea un formulario para enviar la nueva contraseña -->  
+                        {% csrf_token %} <!--  Incluye el token {% csrf_token %} para la protección contra ataques CSRF. -->
+                        <div class="mb-3"> <!-- clase mb-3 para agregar un margen en la parte inferior -->
+                            <label for="nueva_contrasena" class="form-label">Nueva Contraseña</label>  <!-- Se crea un campo para ingresar la nueva contraseña -->
+                            <input type="password" class="form-control" name="nueva_contrasena" required> <!-- Se crea un campo de tipo password para ocultar la contraseña -->
+                        </div>
+                        <div class="d-grid"> <!-- clase d-grid para alinear el botón a la derecha -->
+                            <button type="submit" class="btn btn-primary">Restablecer Contraseña</button> <!-- Se crea un botón para enviar el formulario -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

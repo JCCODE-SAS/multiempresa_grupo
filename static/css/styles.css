@@ -1,0 +1,14 @@
+/* Estilos para la página de inicio */
+
+body {
+    background-color: #777c76; /* Un gris claro de fondo */
+}
+
+.container {
+    margin-bottom: 50px;
+}
+
+.card {
+    border: none; /* Quita el borde de las tarjetas */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Agrega una ligera sombra */
+}
