@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 import random  # Importar el módulo random
 import string #Importa el modulo string
-import uuid  # Importar el módulo uuid
+import uuid  # Importar el módulo uuid para generar tokens únicos
 from django.core.mail import send_mail  # Importa la función para enviar correos
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -168,24 +168,6 @@ def generar_token_recuperacion():
     """Genera un token único para la recuperación de contraseña."""
     return str(uuid.uuid4())
 
-def enviar_correo_recuperacion(usuario, token):
-    """Envía un correo electrónico con el enlace de recuperación de contraseña."""
-    # Crea el enlace de recuperación
-    enlace_recuperacion = f"http://127.0.0.1:8000/usuarios/restablecer_contrasena/{usuario.id}/{token}/"
-    
-    # Renderiza la plantilla del correo electrónico
-    html_content = render_to_string('usuarios/email_recuperacion.html', {'enlace': enlace_recuperacion, 'usuario': usuario}) # Renderiza la plantilla del correo electrónico y pasa el enlace y el usuario
-    text_content = 'This is an important message.' # Crea un mensaje de texto plano
-
-    # Crea el correo electrónico
-    msg = EmailMultiAlternatives( # Crea un objeto EmailMultiAlternatives que permite enviar correos con contenido HTMl
-        'Recuperación de Contraseña', 
-        text_content,
-        'tu-correo@tu-dominio.com', 
-        [usuario.email]
-    )
-    msg.attach_alternative(html_content, "text/html") # Adjunta el contenido HTML al correo electrónico
-    msg.send() # Envía el correo electrónico
 
 # este metodo se encarga de recuperar la contraseña
 def recuperar_contrasena_view(request):
@@ -212,6 +194,25 @@ def recuperar_contrasena_view(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+def enviar_correo_recuperacion(usuario, token):
+    """Envía un correo electrónico con el enlace de recuperación de contraseña."""
+    # Crea el enlace de recuperación
+    enlace_recuperacion = f"http://127.0.0.1:8000/usuarios/restablecer_contrasena/{usuario.id}/{token}/"
+    
+    # Renderiza la plantilla del correo electrónico
+    html_content = render_to_string('usuarios/email_recuperacion.html', {'enlace': enlace_recuperacion, 'usuario': usuario}) # Renderiza la plantilla del correo electrónico y pasa el enlace y el usuario
+    text_content = 'This is an important message.' # Crea un mensaje de texto plano
+
+    # Crea el correo electrónico
+    msg = EmailMultiAlternatives( # Crea un objeto EmailMultiAlternatives que permite enviar correos con contenido HTMl
+        'Recuperación de Contraseña', 
+        text_content,
+        'tu-correo@tu-dominio.com', 
+        [usuario.email]
+    )
+    msg.attach_alternative(html_content, "text/html") # Adjunta el contenido HTML al correo electrónico
+    msg.send() # Envía el correo electrónico
+    
 # este metodo se encarga de restablecer la contraseña al usuario que olvido su contraseña       
 def restablecer_contrasena_view(request, usuario_id, token):
     """Vista para restablecer la contraseña y registrar el cambio en CambioContrasena."""

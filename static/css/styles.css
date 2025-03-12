@@ -1,14 +1,53 @@
-/* Estilos para la página de inicio */
 
-body {
-    background-color: #777c76; /* Un gris claro de fondo */
+
+label.form-label {
+    color: #fff;
 }
-
-.container {
-    margin-bottom: 50px;
-}
-
 .card {
-    border: none; /* Quita el borde de las tarjetas */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Agrega una ligera sombra */
+    width: 400px; /* Ajusta el ancho según sea necesario */
+    padding: 30px;
+    background-color: #0a5c35;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+h2.mb-4     {
+    color: #fff;
+    
+    
+}    
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.logo img {
+    max-width: 100px; /* Ajusta el tamaño del logo */
+}
+
+.btn-primary {
+    background-color: rgb(237, 243, 237) !important; 
+    border-color: rgb(18, 19, 18) !important;
+    color: #0a0a0a !important; 
+}
+.btn-primary:hover {
+    background-color: #000000  !important;
+    border-color: #fffefe !important;
+    color: #f3efef !important;
+}
+.btn-secondary {
+    background-color: rgb(237, 243, 237) !important; 
+    border-color: rgb(18, 19, 18) !important;
+    color: #0a0a0a !important; 
+    
+}
+.btn-secondary:hover {  background-color: #000000  !important;
+    border-color: #fffefe !important;
+    color: #f3efef !important; 
+}
+
+a {
+    color: #14087a !important;;
+    
+}
+a:hover {
+    color: #70bfec !important;
 }

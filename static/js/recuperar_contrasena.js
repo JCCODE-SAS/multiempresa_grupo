@@ -1,26 +1,55 @@
 // javascript para recuperar contraseña
-document.getElementById('recuperarForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Evita que se recargue la página
-    const email = document.getElementById('email').value; // Obtiene el valor del campo email
-    const confirmEmail = document.getElementById('confirmEmail').value; // Obtiene el valor del campo confirmEmail
-    // Realiza una petición POST al servidor con los datos del formulario
-    fetch('{% url "usuarios:recuperar_contrasena" %}', { // URL de la vista
-        method: 'POST', // Método POST
-        headers: { // Cabeceras de la petición
-            'Content-Type': 'application/json', // La petición envía un JSON
-            'X-CSRFToken': '{{ csrf_token }}' // Se añade el token CSRF
-        },
-        body: JSON.stringify({ email: email, confirmEmail: confirmEmail })
-    })  // Se convierte la respuesta a JSON
-    .then(response => response.json())  // Se obtiene el JSON
-    .then(data => {     
-        const mensajeDiv = document.getElementById('mensaje');
-        if (data.message) { // Si hay un mensaje
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('recuperarForm');
+    const mensajeDiv = document.getElementById('mensaje');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+
+        const email = document.getElementById('email').value;
+        const confirmEmail = document.getElementById('confirmEmail').value;
+
+        fetch(recuperarUrl, { // Usa la variable recuperarUrl que se define en la plantilla HTML
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Asegúrate de tener esta función o similar
+            },
+            body: JSON.stringify({ email: email, confirmEmail: confirmEmail })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; }); // Lanza el error con el detalle
+            }
+            return response.json();
+        })
+        .then(data => {
             mensajeDiv.textContent = data.message;
-            mensajeDiv.className = 'mt-3 text-center text-success';  // Se muestra el mensaje
-        } else { // Si hay un error se muestra el mensaje de error
-            mensajeDiv.textContent = data.error;
-            mensajeDiv.className = 'mt-3 text-center text-danger';
-        }
+            mensajeDiv.classList.add('text-success');
+            mensajeDiv.classList.remove('text-danger');
+            form.reset(); // Resetear el formulario despues de mostrar el mensaje
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mensajeDiv.textContent = error.error || 'Hubo un error al enviar el correo de recuperación.';
+            mensajeDiv.classList.add('text-danger');
+            mensajeDiv.classList.remove('text-success');
+        });
     });
+
+    // Función para obtener la cookie CSRF (si no la tienes ya)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 });
