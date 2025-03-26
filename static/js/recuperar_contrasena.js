@@ -2,6 +2,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('recuperarForm');
     const mensajeDiv = document.getElementById('mensaje');
+    const emailInput = document.getElementById('email');
+    const confirmEmailInput = document.getElementById('confirmEmail');
 
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
@@ -52,4 +54,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
+
+    /**
+     * Agrega un listener al campo de email para borrar el mensaje de error cuando se ingrese texto.
+     */
+    emailInput.addEventListener('input', function() {
+        mensajeDiv.textContent = '';
+        mensajeDiv.classList.remove('text-danger');
+        mensajeDiv.classList.remove('text-success');
+    });
+
+    /**
+     * Agrega un listener al campo de confirmEmail para borrar el mensaje de error cuando se ingrese texto.
+     */
+    confirmEmailInput.addEventListener('input', function() {
+        mensajeDiv.textContent = '';
+        mensajeDiv.classList.remove('text-danger');
+        mensajeDiv.classList.remove('text-success');
+    });
 });

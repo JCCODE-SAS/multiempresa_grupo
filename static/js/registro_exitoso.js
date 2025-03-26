@@ -1,5 +1,5 @@
 
- // Redirigir al home después de 5 segundos
+ // Redirigir al home después de 9 segundos
  setTimeout(function() {
-    window.location.href = '/usuarios/login/';
-}, 5000);
+   window.location.href = '/usuarios/login/';
+   }, 9000);

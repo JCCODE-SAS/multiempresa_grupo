@@ -21,15 +21,12 @@ Este módulo define los patrones de URL del proyecto, mapeando URLs a vistas.
 """
 from django.contrib import admin
 from django.urls import path, include # Se importa la función include para incluir URLs de otras aplicaciones.
-from django.shortcuts import redirect # Se importa la función redirect para redirigir a una URL.
 from usuarios import views # se importa correctamente views de la aplicación usuarios
 
-def home_redirect(request): # Función para redirigir a la vista de inicio de sesión.    
-    return redirect('/usuarios/login/') # Redirige a la vista de inicio de sesión.
 
 urlpatterns = [
     path('admin/', admin.site.urls), # URL para el panel de administración de Django.
-    path('', home_redirect, name='home'), # URL para redirigir a la página de inicio.
+    path('', views.home_view, name='home'),  # Usa la vista home_view
     path('usuarios/', include('usuarios.urls', namespace='usuarios')), # se agrega el namespace 'usuarios' a la aplicación 'usuarios' 
     path('usuarios/login/', views.login_view, name='login'),    # URL para la vista de inicio de sesión.
     

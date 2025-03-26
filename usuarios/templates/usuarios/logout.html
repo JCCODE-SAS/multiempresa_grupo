@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccione la cuenta para cerrar sesión</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+        .logout-container {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .logout-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .logout-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 12px;
+            color: #888;
+        }
+        .footer a {
+            color: #888;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+    </div>
+    <h1>Seleccione la cuenta para cerrar sesión</h1>
+    <div class="logout-container">
+        <p>Iniciado sesión como</p>
+        <p style="font-size: 18px; font-weight: bold;">{{ user.username }}</p>
+        <form method="post" action="{% url 'usuarios:login' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Cerrar sesión</button>
+        </form>
+    </div>
+    <div class="logout-container">
+        <p><a href="{% url 'usuarios:login' %}" class="logout-link">Cerrar sesión en todas las cuentas</a></p>
+    </div>
+    <div class="footer">
+        <p>
+            <a href="#">Letra chica</a> | <a href="#">Privacidad</a> | <a href="#">Docs</a> |
+            <a href="#">Póngase en contacto con el soporte de GitHub</a> | <a href="#">Gestionar las cookies</a> |
+            <a href="#">No compartir mi información personal</a>
+        </p>
+    </div>
+</body>
+</html>

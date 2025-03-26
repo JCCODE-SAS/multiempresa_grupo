@@ -116,3 +116,29 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         mensajeDiv.className = 'mt-3 text-center text-danger';
     });
 });
+/**
+ * Obtiene el elemento HTML donde se mostrarán los mensajes de error.
+ */
+const mensajeDiv = document.getElementById('mensaje');
+/**
+ * Obtiene el campo de nombre de usuario.
+ */
+const usernameInput = document.getElementById('username');
+/**
+ * Obtiene el campo de contraseña.
+ */
+const passwordInput = document.getElementById('password');
+
+/**
+ * Agrega un listener al campo de nombre de usuario para borrar el mensaje de error cuando se ingrese texto.
+ */
+usernameInput.addEventListener('input', function() {
+    mensajeDiv.textContent = '';
+});
+
+/**
+ * Agrega un listener al campo de contraseña para borrar el mensaje de error cuando se ingrese texto.
+ */
+passwordInput.addEventListener('input', function() {
+    mensajeDiv.textContent = '';
+});

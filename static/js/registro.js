@@ -170,3 +170,63 @@ function getCookie(name) {
      */
     return cookieValue;
 }
+
+/**
+ * Obtiene el elemento HTML donde se mostrarán los mensajes de error.
+ */
+const generalErrorDiv = document.getElementById('general-error');
+/**
+ * Obtiene el campo de nombre de usuario.
+ */
+const usernameInput = document.getElementById('username');
+/**
+ * Obtiene el campo de email.
+ */
+const emailInput = document.getElementById('email');
+/**
+ * Obtiene el campo de email2.
+ */
+const email2Input = document.getElementById('email2');
+/**
+ * Obtiene el campo de password.
+ */
+const passwordInput = document.getElementById('password');
+/**
+ * Obtiene el campo de password2.
+ */
+const password2Input = document.getElementById('password2');
+
+/**
+ * Agrega un listener al campo de nombre de usuario para borrar el mensaje de error cuando se ingrese texto.
+ */
+usernameInput.addEventListener('input', function() {
+    generalErrorDiv.textContent = '';
+});
+
+/**
+ * Agrega un listener al campo de email para borrar el mensaje de error cuando se ingrese texto.
+ */
+emailInput.addEventListener('input', function() {
+    generalErrorDiv.textContent = '';
+});
+
+/**
+ * Agrega un listener al campo de email2 para borrar el mensaje de error cuando se ingrese texto.
+ */
+email2Input.addEventListener('input', function() {
+    generalErrorDiv.textContent = '';
+});
+
+/**
+ * Agrega un listener al campo de password para borrar el mensaje de error cuando se ingrese texto.
+ */
+passwordInput.addEventListener('input', function() {
+    generalErrorDiv.textContent = '';
+});
+
+/**
+ * Agrega un listener al campo de password2 para borrar el mensaje de error cuando se ingrese texto.
+ */
+password2Input.addEventListener('input', function() {
+    generalErrorDiv.textContent = '';
+});

@@ -57,7 +57,7 @@ def register_view(request):
         # Se hashea la contraseña para almacenarla de forma segura y que es hashea, es  decir, se convierte en una cadena de caracteres aleatoria para complicar su descifrado    
         hashed_password = make_password(password)
         # Se crea el usuario
-        user = Usuario.objects.create(username=username, password=hashed_password, email=email)
+        user = Usuario.objects.create(username=username, password=hashed_password, email=email, is_active=False)
         user.save() # Se guarda el usuario en la base de datos
         return JsonResponse({'message': 'Usuario registrado exitosamente'}, status=201, json_dumps_params={'ensure_ascii': False})  # Se responde con un mensaje de éxito
 
@@ -102,6 +102,8 @@ def login_view(request):
         else: # Si las credenciales son inválidas
             try:    # Se intenta obtener el usuario con el email o username
                 usuario = Usuario.objects.get(email=email_or_username) # Se obtiene el usuario con el email o username
+                if not usuario.is_active: # Se verifica si el usuario está activo
+                    return JsonResponse({'error': 'Usuario inactivo. Por favor, espera a que el administrador active tu cuenta.'}, status=400, json_dumps_params={'ensure_ascii': False})
                 IntentosFallidos.objects.create( # Se registra el intento fallido en la base de datos
                     id_usuario=usuario,
                     ip_usuario=request.META.get('REMOTE_ADDR'),
@@ -115,33 +117,38 @@ def login_view(request):
         return render(request, 'usuarios/login.html') # renderiza a la pagina de login
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405, json_dumps_params={'ensure_ascii': False})
+from django.shortcuts import redirect
 
+def home_view(request):
+    return redirect('usuarios:login')  # Redirige a la página de inicio de sesión
+    
 # este metodo se encarga de cerrar sesion
 def logout_view(request):
-    if request.method == 'POST':
+    sesion = Sesiones.objects.filter(id_usuario=request.user, fecha_fin__isnull=True).last()
+    if sesion:
+        sesion.fecha_fin = timezone.now()
+        sesion.save()
+    logout(request)
+    return redirect('usuarios:login')  # Redirige a la página de inicio de sesión
+
+
+# este metodo se encarga de mostrar la pagina de administracion de usuarios
+@login_required  # El decorador @login_required es una herramienta proporcionada por Django para restringir el acceso a una vista solo a usuarios que han iniciado sesión.
+def admin_usuarios_view(request):
+    if request.method == 'GET':
+        return render(request, 'usuarios/admin_usuarios.html')  # RENDERIZA LA PAGINA DE ADMINISTRACION DE USUARIOS aclaro no es la de django admin
+    elif request.method == 'POST':  # se agrego el metodo post
         # Se obtiene la sesión activa del usuario
         sesion = Sesiones.objects.filter(id_usuario=request.user, fecha_fin__isnull=True).last()
         if sesion:  # Si la sesión existe, se cierra
             sesion.fecha_fin = timezone.now()
             sesion.save()
-        logout(request) # cierra la sesion correctamente
-        return JsonResponse({'message': 'Logout exitoso'}, status=200, json_dumps_params={'ensure_ascii': False})
-    else: # Si el método no es POST, se responde con un error
-        return JsonResponse({'error': 'Método no permitido'}, status=405, json_dumps_params={'ensure_ascii': False})
-
-# este metodo se encarga de mostrar la pagina de administracion de usuarios
-@login_required
-def admin_usuarios_view(request):
-    if request.method == 'GET':
-        return render(request, 'usuarios/admin_usuarios.html') # RENDERIZA LA PAGINA DE ADMINISTRACION DE USUARIOS aclaro no es la de django admin
-    elif request.method == 'POST': #se agrego el metodo post
-        logout(request) # cierra la sesion correctamente
-        return JsonResponse({'message': 'Logout exitoso'}, status=200, json_dumps_params={'ensure_ascii': False})
-    else:   #se agrego el metodo else para mostrar un mensaje de error si el metodo no es permitido
-        return JsonResponse({'error': 'Método no permitido'}, status=405, json_dumps_params={'ensure_ascii': False})
-
+        logout(request)
+        return redirect('usuarios:login')  # Redirige a la página de inicio de sesión
+    else:
+        return redirect('usuarios:login')  # Redirige también si el método no es POS
 #  Vista para cambiar la contraseña de un usuario logueado.
-@login_required
+@login_required #El decorador @login_required es una herramienta proporcionada por Django para restringir el acceso a una vista solo a usuarios que han iniciado sesión.
 def cambio_contrasena_view(request):
     # Se valida el método de la solicitud
     if request.method == 'POST':

@@ -4,7 +4,8 @@ from .models import Usuario, IntentosFallidos, Sesiones, CambioContrasena
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'rol', 'fecha_creacion', 'fecha_ultima_sesion')
+    list_display = ('username', 'email', 'rol', 'fecha_creacion', 'fecha_ultima_sesion','is_active')
+    list_filter = ('rol', 'is_active')
     search_fields = ('username', 'email')
     ordering = ('-fecha_creacion',)
 

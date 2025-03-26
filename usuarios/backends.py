@@ -15,7 +15,7 @@ class EmailBackend(ModelBackend):
         except ObjectDoesNotExist:  # Si no se encuentra un usuario, devuelve None.
             return None         
         else: # Si se encuentra un usuario, verifica la contraseña.
-            if check_password(password, user.password):
+            if check_password(password, user.password)and user.is_active: #Se verifica que el usuario este activo
                 return user # Si la contraseña es correcta, devuelve el usuario.
         return None # Si la contraseña es incorrecta, devuelve None.
 

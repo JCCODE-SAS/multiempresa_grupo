@@ -67,6 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    
 ] # Configura los middleware de Django (intermediarios de las peticiones)   
 
 ROOT_URLCONF = 'Multiempresa.urls' # Configura el archivo de rutas principal

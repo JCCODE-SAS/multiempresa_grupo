@@ -18,6 +18,7 @@ class Usuario(AbstractUser):
     fecha_creacion = models.DateTimeField(auto_now_add=True) # Fecha y hora en que se creó el usuario. Se genera automáticamente.
     fecha_ultima_sesion = models.DateTimeField(blank=True, null=True) # Fecha y hora de la última sesión del usuario.
     token_recuperacion = models.UUIDField(null=True, blank=True, editable=False)  # Token único para recuperación de contraseña.
+    is_active = models.BooleanField(default=False)  # Agrega este campo
     USERNAME_FIELD = 'email'  # Campo que se usará para autenticar al usuario.
     REQUIRED_FIELDS = ['username'] # Campos requeridos para crear un usuario.
 
