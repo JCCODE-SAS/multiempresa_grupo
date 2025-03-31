@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
-from .models import Usuario,IntentosFallidos, Sesiones, CambioContrasena
+from roles.models import Roles #se agrega la importacion de Roles
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required #se agrega la importacion de permission_required
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.urls import reverse
@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMultiAlternatives
-
+from django.db.models import Q   
 """
 Este módulo define las vistas (controladores) de la aplicación 'usuarios'.
 Contiene las funciones que gestionan las solicitudes HTTP relacionadas con:
@@ -27,7 +27,7 @@ Contiene las funciones que gestionan las solicitudes HTTP relacionadas con:
 - Cambio de contraseña.
 - Recuperación de contraseña (envío de correo y restablecimiento).
 """
-
+from .models import Usuario,IntentosFallidos, Sesiones, CambioContrasena
 # este metodo se encarga de registrar un usuario
 def register_view(request):
     if request.method == 'POST': #se agrego el metodo post
@@ -239,3 +239,78 @@ def restablecer_contrasena_view(request, usuario_id, token):
 
         return HttpResponseRedirect(reverse('login'))  # Redirige al login
     return render(request, 'usuarios/restablecer_contrasena.html', {'usuario': usuario})
+
+@login_required
+@permission_required('usuarios.view_usuario', raise_exception=True)
+def gestionar_usuarios_view(request):
+    """
+    Vista para administrar usuarios. Permite listar, filtrar, activar/desactivar,
+    cambiar roles y archivar usuarios.
+    """
+    usuarios = Usuario.objects.all().order_by('username')
+    roles = Roles.objects.all()
+
+    # Filtros
+    filtro_username = request.GET.get('username', '')
+    filtro_email = request.GET.get('email', '')
+    filtro_rol = request.GET.get('rol', '')
+    filtro_activo = request.GET.get('activo', '')
+
+    if filtro_username:
+        usuarios = usuarios.filter(username__icontains=filtro_username)
+    if filtro_email:
+        usuarios = usuarios.filter(email__icontains=filtro_email)
+    if filtro_rol:
+        usuarios = usuarios.filter(rol_id=filtro_rol)
+    if filtro_activo:
+        usuarios = usuarios.filter(is_active=(filtro_activo == 'true'))
+
+    if request.method == 'POST':
+        print(request.POST)  # Depuración
+        action = request.POST.get('action')
+        user_id = request.POST.get('user_id')
+        usuario = get_object_or_404(Usuario, id=user_id)
+
+        if action == 'activar':
+            usuario.is_active = True
+            usuario.save()
+            print(f"Usuario {usuario.id} activado.")
+
+        elif action == 'cambiar_rol':
+            nuevo_rol_id = request.POST.get('nuevo_rol')
+            nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
+            usuario.rol = nuevo_rol
+            usuario.save()
+        elif action == 'desactivar':
+            usuario.is_active = False
+            usuario.save()
+        elif action == 'archivar':
+            usuario.is_active = False
+            usuario.save()
+
+        return redirect('usuarios:gestionar_usuarios')
+
+    context = {
+        'usuarios': usuarios,
+        'roles': roles,
+        'filtro_username': filtro_username,
+        'filtro_email': filtro_email,
+        'filtro_rol': filtro_rol,
+        'filtro_activo': filtro_activo,
+    }
+    return render(request, 'usuarios/gestionar_usuarios.html', context)
+@login_required
+@permission_required('usuarios.change_usuario', raise_exception=True)
+def editar_usuario_view(request, usuario_id):
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    if request.method == 'POST':
+        # Procesar el formulario de edición
+        usuario.username = request.POST.get('username')
+        usuario.email = request.POST.get('email')
+        # ... otros campos ...
+        usuario.save()
+        return redirect('usuarios:gestionar_usuarios')  # Redirigir a la lista de usuarios #se cambio el nombre de la url
+    else:
+        # Mostrar el formulario de edición
+        context = {'usuario': usuario}
+        return render(request, 'usuarios/editar_usuario.html', context)

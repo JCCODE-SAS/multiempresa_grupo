@@ -156,5 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # Configura el tipo de camp
 
 LOGIN_URL = '/usuarios/login/' # Configura la URL de inicio de sesión
 
-
-
+CSRF_COOKIE_SECURE = False # Importante para desarrollo local sin HTTPS
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000'] # Agrega los origenes de confianza.
+SESSION_COOKIE_SECURE = False # Para desarrollo local sin HTTPS
+SESSION_COOKIE_HTTPONLY = True # Se recomienda para mayor seguridad

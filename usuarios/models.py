@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from roles.models import Roles
 import uuid  # Importa la librería uuid
 """
@@ -8,7 +8,7 @@ Estos modelos se utilizan para gestionar la información de los usuarios,
 incluyendo datos de perfil, intentos de inicio de sesión fallidos, sesiones activas,
 y registros de cambios de contraseña.
 """
-class Usuario(AbstractUser):
+class Usuario(AbstractUser, PermissionsMixin):
     """
     Representa un usuario del sistema. Extiende el modelo AbstractUser de Django.  
     
@@ -26,7 +26,12 @@ class Usuario(AbstractUser):
         db_table = 'usuarios_usuario'   # Nombre de la tabla en la base de datos.
         verbose_name = "Usuario del Sistema"    # Nombre en singular para el modelo en el panel de administración.
         verbose_name_plural = "Usuarios del Sistema" # Nombre en plural para el modelo en el panel de administración.
-
+        permissions = [
+            ("can_view_usuario_custom", "Can view usuario custom"), #se cambio el nombre del permiso
+            ("can_change_usuario_status", "Can change usuario status"), #se cambio el nombre del permiso
+            ("can_change_usuario_rol", "Can change usuario rol"), #se cambio el nombre del permiso
+            ("can_archive_usuario", "Can archive usuario"), #se cambio el nombre del permiso
+        ]
     def __str__(self):
         return self.username    # Devuelve el nombre de usuario como representación en cadena del objeto.
 

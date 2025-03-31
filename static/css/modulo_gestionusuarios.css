@@ -1,0 +1,50 @@
+/* modulo_gestionusuarios.css */
+body {
+    background-color: #0a5c35;
+    background-image: linear-gradient(190deg, #fcfdfd 0%, #0a5c35 100%);
+}
+table {
+    width: 100%; /* El ancho de la tabla será el 100% del contenedor padre */
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+.action-buttons {
+    display: flex; /* Usamos flexbox para alinear los botones */
+    flex-wrap: wrap; /* Permitimos que los botones se envuelvan a la siguiente línea en pantallas pequeñas */
+    gap: 5px; /* Agregamos un pequeño espacio entre los botones */
+}
+
+.action-buttons form {
+    margin: 0; /* Eliminamos los márgenes predeterminados de los formularios */
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 768px) {
+    table {
+        font-size: 0.8em; /* Reducimos el tamaño de la fuente en pantallas pequeñas */
+    }
+
+    .action-buttons {
+        flex-direction: column; /* Apilamos los botones verticalmente en pantallas pequeñas */
+        align-items: stretch; /* Estiramos los botones para que ocupen todo el ancho disponible */
+    }
+
+    .action-buttons form {
+        width: 100%; /* Hacemos que los formularios ocupen todo el ancho disponible */
+    }
+
+    .action-buttons button, .action-buttons a {
+        width: 100%; /* Hacemos que los botones ocupen todo el ancho disponible */
+    }
+}

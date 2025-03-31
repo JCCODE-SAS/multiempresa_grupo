@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+</head>
+<body>
+    <h1>Editar Usuario</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="{{ usuario.username }}">
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="{{ usuario.email }}">
+
+        <!-- Agrega aquí otros campos que quieras editar -->
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+</body>
+</html>

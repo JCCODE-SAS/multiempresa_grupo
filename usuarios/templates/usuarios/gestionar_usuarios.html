@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/modulo_gestionusuarios.css' %}"> <!-- Agregamos el archivo de estilos personalizado -->
+</head>
+<body>
+    <h1>Administración de Usuarios</h1>
+
+    <form method="get">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="{{ filtro_username }}">
+
+        <label for="email">Email:</label>
+        <input type="text" name="email" id="email" value="{{ filtro_email }}">
+
+        <label for="rol">Rol:</label>
+        <select name="rol" id="rol">
+            <option value="">Todos</option>
+            {% for rol in roles %}
+                <option value="{{ rol.id_rol }}" {% if filtro_rol == rol.id_rol|stringformat:'s' %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="activo">Activo:</label>
+        <select name="activo" id="activo">
+            <option value="">Todos</option>
+            <option value="true" {% if filtro_activo == 'true' %}selected{% endif %}>Sí</option>
+            <option value="false" {% if filtro_activo == 'false' %}selected{% endif %}>No</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.rol.nombre_rol|default:"Sin Rol" }}</td>
+                    <td class="action-buttons">
+                        <form method="post" onsubmit="return confirmarAccion('cambiar_rol')">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                            <select name="nuevo_rol">
+                                {% for rol in roles %}
+                                    <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol"><i class="bi bi-pencil-square"></i> Cambiar Rol</button>
+                            <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+                        </form>
+                        {% if usuario.is_active %}
+                            <form method="post" onsubmit="return confirmarAccion('desactivar')">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                <button type="submit" name="action" value="desactivar" class="btn btn-danger btn-sm" data-action="Desactivar"><i class="bi bi-stop-circle"></i> Desactivar</button>
+                            </form>
+                            <form method="post" onsubmit="return confirmarAccion('archivar')">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                <button type="submit" name="action" value="archivar" class="btn btn-dark btn-sm" data-action="Archivar"><i class="bi bi-archive"></i> Archivar</button>
+                            </form>
+                        {% endif %}
+                        {% if not usuario.is_active %}
+                            <form method="post" onsubmit="return confirmarAccion('activar')" id="activar-form-{{ usuario.id }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                <input type="hidden" name="action" value="activar">
+                                <button type="submit" class="btn btn-success btn-sm" data-action="Activar"><i class="bi bi-check-circle"></i> Activar</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if usuario.is_active %}
+                            <span class="text-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
+                        {% else %}
+                            <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="{% static 'js/mensajes_confirmacion.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
