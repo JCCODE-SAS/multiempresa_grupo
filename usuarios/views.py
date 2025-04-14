@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q   
+from django.db.models import Q  # Importa el objeto Q para construir consultas complejas a la base de datos, permitiendo combinar filtros con operadores lógicos como OR. 
 """
 Este módulo define las vistas (controladores) de la aplicación 'usuarios'.
 Contiene las funciones que gestionan las solicitudes HTTP relacionadas con:
@@ -94,7 +94,7 @@ def login_view(request):
             Sesiones.objects.create(
                 id_usuario=user,
                 token_sesion=token_sesion, # Se crea un token de sesión único
-                fecha_inicio=timezone.now(),    # Se obtiene la fecha y hora actual
+                fecha_inicio= timezone.now(),    # Se obtiene la fecha y hora actual
                 ip_usuario=request.META.get('REMOTE_ADDR'), # Se obtiene la dirección IP del cliente
                 agente_usuario=request.META.get('HTTP_USER_AGENT')  # Se obtiene el agente de usuario del cliente
             )
@@ -134,9 +134,9 @@ def logout_view(request):
 
 # este metodo se encarga de mostrar la pagina de administracion de usuarios
 @login_required  # El decorador @login_required es una herramienta proporcionada por Django para restringir el acceso a una vista solo a usuarios que han iniciado sesión.
-def admin_usuarios_view(request):
+def panel_administrativo_view(request):
     if request.method == 'GET':
-        return render(request, 'usuarios/admin_usuarios.html')  # RENDERIZA LA PAGINA DE ADMINISTRACION DE USUARIOS aclaro no es la de django admin
+        return render(request, 'usuarios/panel_administrativo.html')  # RENDERIZA LA PAGINA DE ADMINISTRACION DE USUARIOS aclaro no es la de django admin
     elif request.method == 'POST':  # se agrego el metodo post
         # Se obtiene la sesión activa del usuario
         sesion = Sesiones.objects.filter(id_usuario=request.user, fecha_fin__isnull=True).last()

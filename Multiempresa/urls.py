@@ -15,20 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 """
-Configuración de URL para el proyecto Multiempresa.
-
-Este módulo define los patrones de URL del proyecto, mapeando URLs a vistas.
+URL configuration for Multiempresa project.
 """
 from django.contrib import admin
-from django.urls import path, include # Se importa la función include para incluir URLs de otras aplicaciones.
-from usuarios import views # se importa correctamente views de la aplicación usuarios
-
+from django.urls import path, include
+from usuarios import views as usuarios_views  # Usa un alias para evitar conflictos
 
 urlpatterns = [
-    path('admin/', admin.site.urls), # URL para el panel de administración de Django.
-    path('', views.home_view, name='home'),  # Usa la vista home_view
-    path('usuarios/', include('usuarios.urls', namespace='usuarios')), # se agrega el namespace 'usuarios' a la aplicación 'usuarios' 
-    path('usuarios/login/', views.login_view, name='login'),    # URL para la vista de inicio de sesión.
-    
+    path('admin/', admin.site.urls),
+    path('', usuarios_views.home_view, name='home'),  # Asegúrate de que esta sea la vista correcta para tu página principal
+    path('usuarios/', include('usuarios.urls', namespace='usuarios')),
+    path('usuarios/login/', usuarios_views.login_view, name='login'),
+    path('empresas/', include('empresas.urls', namespace='empresas')),  # Incluye las URLs de la aplicación 'empresas'
 ]
-

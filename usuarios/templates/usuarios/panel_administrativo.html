@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Administrativo</title>
+    <title>Panel de Control Administrativo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/stylesmodulo1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_panel_administrativo.css' %}">
     
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Sistema Administrativo</a>
+            <a class="navbar-brand" href="#">Panel de Control Administrativo</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -36,9 +36,9 @@
 
     <div class="container mt-5">
         <div class="card p-4 shadow">
-            <h2 class="mb-4 text-center">Sistema Administrativo</h2>
+            <h2 class="mb-4 text-center">Panel de Control Administrativo</h2>
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action">1. Crear Nueva Empresa</a>
+                <a href="{% url 'empresas:crear_empresa' %}" class="list-group-item list-group-item-action">1. Crear Nueva Empresa</a>
                 <a href="#" class="list-group-item list-group-item-action">2. Administrar Empresas</a>
                 <a href="#" class="list-group-item list-group-item-action">3. Información de Empresas Existentes</a>
                 <a href="{% url 'usuarios:gestionar_usuarios' %}" class="list-group-item list-group-item-action">4. Administrador de Usuarios</a>

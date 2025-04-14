@@ -1,0 +1,30 @@
+Gestión del servidor Apache:
+
+Iniciar Apache:
+sudo systemctl start apache2
+Detener Apache:
+sudo systemctl stop apache2
+Reiniciar Apache:
+sudo systemctl restart apache2
+Recargar la configuración de Apache:
+sudo systemctl reload apache2
+Verificar el estado de Apache:
+sudo systemctl status apache2
+Habilitar el inicio automático de Apache al arrancar el sistema:
+sudo systemctl enable apache2
+Deshabilitar el inicio automático de Apache al arrancar el sistema:
+sudo systemctl disable apache2
+Gestión del servidor MariaDB:
+
+Iniciar MariaDB:
+sudo systemctl start mariadb
+Detener MariaDB:
+sudo systemctl stop mariadb
+Reiniciar MariaDB:
+sudo systemctl restart mariadb
+Verificar el estado de MariaDB:
+sudo systemctl status mariadb
+Habilitar el inicio automático de MariaDB al arrancar el sistema:
+sudo systemctl enable mariadb
+Deshabilitar el inicio automático de MariaDB al arrancar el sistema:
+sudo systemctl disable mariadb

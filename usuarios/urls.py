@@ -16,7 +16,7 @@ urlpatterns = [
     path('registro_exitoso/', views.registro_exitoso, name='registro_exitoso'), # URL para la vista de registro exitoso
     path('logout/', views.logout_view, name='logout'),  # URL para la vista de cierre de sesión
     path('gestionar_usuarios/', views.gestionar_usuarios_view, name='gestionar_usuarios'),  # URL para la vista de administración de usuarios #se cambio el nombre de la url
-    path('admin_usuarios/', views.admin_usuarios_view, name='admin_usuarios'),  # URL para la vista de administración de usuarios
+    path('panel_administrativo/', views.panel_administrativo_view, name='panel_administrativo'),  # URL para la vista de administración de usuarios
     path('login/', views.login_view, name='login'), #se movio login a este archivo.
     path('editar_usuario/<int:usuario_id>/', views.editar_usuario_view, name='editar_usuario'), #se agrega la url para editar usuario
 

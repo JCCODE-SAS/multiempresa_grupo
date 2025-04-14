@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'usuarios',
     'roles',
     'seguridad',
+    'empresas',
+
     # Agregamos la app que creamos
     
 ]
@@ -100,7 +102,7 @@ DATABASES = { # Configura la base de datos de Django
         'ENGINE': 'django.db.backends.mysql',  # Cambiamos SQLite por MySQL
         'NAME': 'multiempresa',  # Nombre de la base de datos en MySQL
         'USER': 'root',       # Usuario de MySQL
-        'PASSWORD': '', # Contraseña de MySQL
+        'PASSWORD': '1983', # Contraseña de MySQL
         'HOST': 'localhost',        # Dirección del servidor MySQL (usa IP si es remoto)
         'PORT': '3306',             # Puerto de MySQL (3306 por defecto)
         'OPTIONS':{         # Opciones adicionales de MySQL
@@ -134,11 +136,12 @@ AUTH_PASSWORD_VALIDATORS = [ # Configura las validaciones de contraseñas
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False # solo usar en false en produccion por la seguridad Si has configurado USE_TZ = False en tu archivo settings.py, Django no manejará las zonas horarias.Si planeas tener usuarios en diferentes zonas horarias, almacenar la hora local no es una buena idea, ya que dificultará la conversión y visualización de las horas en la zona horaria correcta de cada usuario.
+
 
 
 # Static files (CSS, JavaScript, Images)

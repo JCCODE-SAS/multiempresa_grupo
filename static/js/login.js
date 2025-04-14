@@ -83,9 +83,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
              */
             successDiv.className = 'mt-3 text-center text-success';
             /**
-             * Redirige al usuario a la página de administración de usuarios.
+             * Redirige al usuario a la página de panel administrativo.
              */
-            window.location.href = "/usuarios/admin_usuarios/";
+            window.location.href = "/usuarios/panel_administrativo/";
         } else if (data.error) {
             /**
              * Muestra el mensaje de error en el elemento correspondiente.
