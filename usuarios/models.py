@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from roles.models import Roles
 import uuid  # Importa la librería uuid
+from django.conf import settings # Importar settings para referenciar al User model
+# --- FIN NUEVA IMPORTACIÓN ---
 """
 Este módulo define los modelos de datos para la aplicación 'usuarios'.
 Estos modelos se utilizan para gestionar la información de los usuarios,
@@ -27,10 +29,11 @@ class Usuario(AbstractUser, PermissionsMixin):
         verbose_name = "Usuario del Sistema"    # Nombre en singular para el modelo en el panel de administración.
         verbose_name_plural = "Usuarios del Sistema" # Nombre en plural para el modelo en el panel de administración.
         permissions = [
-            ("can_view_usuario_custom", "Can view usuario custom"), #se cambio el nombre del permiso
-            ("can_change_usuario_status", "Can change usuario status"), #se cambio el nombre del permiso
-            ("can_change_usuario_rol", "Can change usuario rol"), #se cambio el nombre del permiso
-            ("can_archive_usuario", "Can archive usuario"), #se cambio el nombre del permiso
+            ("can_access_user_administration", "Can access user administration page"),# --- PERMISO PARA ACCEDER A LA VISTA ---
+            ("can_view_usuario_custom", "Can view usuario custom"), #permiso para ver un usuario
+            ("can_change_usuario_status", "Can change usuario status"), #permiso para cambiar el estado de un usuario
+            ("can_change_usuario_rol", "Can change usuario rol"), #permiso para cambiar el rol de un usuario 
+            ("can_archive_usuario", "Can archive usuario"),  #permiso para archivar usuarios
         ]
     def __str__(self):
         return self.username    # Devuelve el nombre de usuario como representación en cadena del objeto.
@@ -84,3 +87,47 @@ class CambioContrasena(models.Model):
         db_table_comment = 'Esta tabla registra los cambios de contraseñas realizados por los usuarios.'
         verbose_name = 'Cambio de contraseña'   # Nombre en singular para el modelo en el panel de administración.
         verbose_name_plural = 'Cambios de contraseñas'  # Nombre en plural para el modelo en el panel de administración.
+ 
+ 
+ #--- NUEVO MODELO PARA ARCHIVAR ---
+class UsuarioArchivado(models.Model):
+    """
+    Registra cuando un usuario es archivado y por quién.
+    """
+    usuario_archivado = models.OneToOneField(
+        Usuario,
+        on_delete=models.CASCADE, # Si se borra el usuario, se borra este registro
+        related_name='registro_archivado',
+        verbose_name="Usuario Archivado"
+    )
+    archivado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, # Buena práctica para referenciar al modelo User
+        on_delete=models.SET_NULL, # Si se borra el admin, mantenemos el registro
+        null=True,
+        blank=True,
+        related_name='usuarios_archivados_por_mi',
+        verbose_name="Archivado por"
+    )
+    fecha_archivado = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de Archivado"
+    )
+    motivo = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Motivo del Archivado"
+    )
+
+    class Meta:
+        db_table = 'usuarios_archivados' # Nombre específico para la tabla
+        verbose_name = "Usuario Archivado"
+        verbose_name_plural = "Usuarios Archivados"
+        ordering = ['-fecha_archivado']
+        db_table_comment = 'Registro de usuarios archivados, quién los archivó y por qué.'
+
+    def __str__(self):
+        actor = self.archivado_por.username if self.archivado_por else "Sistema"
+        # Formatear fecha para legibilidad
+        fecha_formateada = self.fecha_archivado.strftime('%Y-%m-%d %H:%M') if self.fecha_archivado else 'Fecha desconocida'
+        return f"{self.usuario_archivado.username} archivado por {actor} el {fecha_formateada}"
+# --- FIN NUEVO MODELO ---

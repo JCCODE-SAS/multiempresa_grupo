@@ -48,3 +48,36 @@ th {
         width: 100%; /* Hacemos que los botones ocupen todo el ancho disponible */
     }
 }
+ /* Estilos adicionales para alinear mejor los elementos en la celda de acciones */
+ .action-buttons form,
+ .action-buttons a {
+     display: inline-block; /* Hace que los formularios y enlaces se comporten como bloques en línea */
+     margin-right: 5px; /* Espacio a la derecha de cada elemento */
+     margin-bottom: 5px; /* Espacio debajo por si se envuelven */
+     vertical-align: middle; /* Alinea verticalmente los elementos */
+ }
+ .action-buttons .form-control-sm,
+ .action-buttons .form-select-sm {
+     width: auto; /* Ajusta el ancho del input/select */
+     display: inline-block; /* Permite que esté en línea con el botón */
+     vertical-align: middle; /* Alinea con el botón */
+ }
+ .action-buttons .archive-reason-input {
+      width: 150px; /* Ancho específico para el campo de motivo */
+ }
+ /* Estilos mínimos para que el campo motivo y botón se vean mejor */
+ .action-buttons form,
+ .action-buttons a {
+     display: inline-block; /* Elementos en línea */
+     margin-right: 5px;
+     margin-bottom: 5px;
+     vertical-align: middle; /* Alineación vertical */
+ }
+ .action-buttons .archive-reason-input {
+      width: 150px; /* Ancho para el campo motivo */
+      display: inline-block; /* Para que esté en línea */
+      vertical-align: middle;
+ }
+ .table th, .table td {
+     vertical-align: middle;
+ }

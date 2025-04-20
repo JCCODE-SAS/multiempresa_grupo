@@ -27,7 +27,7 @@ Contiene las funciones que gestionan las solicitudes HTTP relacionadas con:
 - Cambio de contraseña.
 - Recuperación de contraseña (envío de correo y restablecimiento).
 """
-from .models import Usuario,IntentosFallidos, Sesiones, CambioContrasena
+from .models import Usuario, IntentosFallidos, Sesiones, CambioContrasena, UsuarioArchivado
 # este metodo se encarga de registrar un usuario
 def register_view(request):
     if request.method == 'POST': #se agrego el metodo post
@@ -242,12 +242,14 @@ def restablecer_contrasena_view(request, usuario_id, token):
 
 @login_required
 @permission_required('usuarios.view_usuario', raise_exception=True)
-def gestionar_usuarios_view(request):
+def administracion_usuarios_view(request):
     """
     Vista para administrar usuarios. Permite listar, filtrar, activar/desactivar,
     cambiar roles y archivar usuarios.
     """
-    usuarios = Usuario.objects.all().order_by('username')
+    #usuarios = Usuario.objects.all().order_by('username')
+    ids_archivados = UsuarioArchivado.objects.values_list('usuario_archivado_id', flat=True)
+    usuarios = Usuario.objects.exclude(id__in=ids_archivados).order_by('username')
     roles = Roles.objects.all()
 
     # Filtros
@@ -272,23 +274,59 @@ def gestionar_usuarios_view(request):
         usuario = get_object_or_404(Usuario, id=user_id)
 
         if action == 'activar':
-            usuario.is_active = True
-            usuario.save()
-            print(f"Usuario {usuario.id} activado.")
+            if request.user.has_perm('usuarios.can_change_usuario_status'):
+                usuario.is_active = True
+                usuario.save()
+                print(f"Usuario {usuario.id} activado.")
+            else:
+                # ... (manejar error de permiso) ...
+                pass # O messages.error(...)
 
         elif action == 'cambiar_rol':
-            nuevo_rol_id = request.POST.get('nuevo_rol')
-            nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
-            usuario.rol = nuevo_rol
-            usuario.save()
-        elif action == 'desactivar':
-            usuario.is_active = False
-            usuario.save()
-        elif action == 'archivar':
-            usuario.is_active = False
-            usuario.save()
+             if request.user.has_perm('usuarios.can_change_usuario_rol'):
+                nuevo_rol_id = request.POST.get('nuevo_rol')
+                nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
+                usuario.rol = nuevo_rol
+                usuario.save()
 
-        return redirect('usuarios:gestionar_usuarios')
+             else:
+                # ... (manejar error de permiso) ...
+                pass # O messages.error(...)
+        elif action == 'desactivar':
+            if request.user.has_perm('usuarios.can_change_usuario_status'):
+                usuario.is_active = False
+                usuario.save()
+            else:
+                # ... (manejar error de permiso) ...
+                pass # O messages.error(...)
+
+        elif action == 'archivar':
+            # El permiso 'can_archive_usuario' ya se verifica aquí implícitamente
+            # porque si el usuario no tuviera el permiso general para estar en la página,
+            # no llegaría aquí. PERO es buena práctica verificarlo explícitamente
+            # O confiar en que el botón solo se mostró si tenía el permiso (ver plantilla).
+            # Para mayor seguridad, puedes añadir la comprobación aquí también:
+            if request.user.has_perm('usuarios.can_archive_usuario'):
+                motivo_archivo = request.POST.get('motivo_archivo', '')
+                if not UsuarioArchivado.objects.filter(usuario_archivado=usuario).exists():
+                    UsuarioArchivado.objects.create(
+                        usuario_archivado=usuario,
+                        archivado_por=request.user,
+                        motivo=motivo_archivo
+                    )
+                    usuario.is_active = False
+                    usuario.save()
+                    # ... (mensaje opcional) ...
+                else:
+                    # ... (mensaje usuario ya archivado) ...
+                    pass
+            else:
+                # ... (manejar error de permiso para archivar) ...
+                pass # O messages.error(...)
+        # --- FIN VERIFICACIONES DE PERMISOS ---
+
+
+        return redirect('usuarios:administracion_usuarios')
 
     context = {
         'usuarios': usuarios,
@@ -298,7 +336,8 @@ def gestionar_usuarios_view(request):
         'filtro_rol': filtro_rol,
         'filtro_activo': filtro_activo,
     }
-    return render(request, 'usuarios/gestionar_usuarios.html', context)
+    return render(request, 'usuarios/administracion_usuarios.html', context)
+
 @login_required
 @permission_required('usuarios.change_usuario', raise_exception=True)
 def editar_usuario_view(request, usuario_id):
@@ -309,7 +348,7 @@ def editar_usuario_view(request, usuario_id):
         usuario.email = request.POST.get('email')
         # ... otros campos ...
         usuario.save()
-        return redirect('usuarios:gestionar_usuarios')  # Redirigir a la lista de usuarios #se cambio el nombre de la url
+        return redirect('usuarios:administracion_usuarios')  # Redirigir a la lista de usuarios #se cambio el nombre de la url
     else:
         # Mostrar el formulario de edición
         context = {'usuario': usuario}

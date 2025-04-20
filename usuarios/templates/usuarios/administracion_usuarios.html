@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/administracion_usuarios.css' %}"> <!-- Agregamos el archivo de estilos personalizado -->
+    
+</head>
+<body>
+    <div class="container mt-4"> <!-- Añadido container para mejor espaciado -->
+        <h1>Administración de Usuarios</h1>
+
+        <!-- Formulario de Filtros (ligeramente mejorado con clases de Bootstrap) -->
+        <form method="get" class="row g-3 mb-4 align-items-end">
+            <div class="col-md-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" name="username" id="username" value="{{ filtro_username }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="text" name="email" id="email" value="{{ filtro_email }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <label for="rol" class="form-label">Rol:</label>
+                <select name="rol" id="rol" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    {% for rol in roles %}
+                        <option value="{{ rol.id_rol }}" {% if filtro_rol == rol.id_rol|stringformat:'s' %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="activo" class="form-label">Activo:</label>
+                <select name="activo" id="activo" class="form-select form-select-sm">
+                    <option value="">Todos</option>
+                    <option value="true" {% if filtro_activo == 'true' %}selected{% endif %}>Sí</option>
+                    <option value="false" {% if filtro_activo == 'false' %}selected{% endif %}>No</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">Filtrar</button>
+            </div>
+        </form>
+
+        <!-- Tabla de Usuarios -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark"> <!-- Usando table-dark para el encabezado -->
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th> <!-- Movido Estado antes de Acciones -->
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.username }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.rol.nombre_rol|default:"Sin Rol" }}</td>
+                            <td>
+                                {% if usuario.is_active %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span> <!-- Usando badges -->
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Inactivo</span> <!-- Usando badges -->
+                                {% endif %}
+                            </td>
+                            <td class="action-buttons">
+                                <!-- Formulario Cambiar Rol (sin cambios de permiso) -->
+                                <form method="post" onsubmit="return confirmarAccion('cambiar_rol')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                    <select name="nuevo_rol" class="form-select form-select-sm d-inline-block" title="Cambiar Rol" style="width: auto;"> <!-- Estilo para select -->
+                                        {% for rol in roles %}
+                                            <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol" title="Guardar Cambios "><i class="bi bi-pencil-square"></i></button>
+                                </form>
+
+                                
+
+                                {% if usuario.is_active %}
+                                    <!-- Formulario Desactivar (sin cambios de permiso) -->
+                                    <form method="post" onsubmit="return confirmarAccion('desactivar')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <button type="submit" name="action" value="desactivar" class="btn btn-danger btn-sm" data-action="Desactivar" title="Desactivar Usuario"><i class="bi bi-stop-circle"></i></button>
+                                    </form>
+
+                                    <!-- Formulario Archivar (CON CAMPO MOTIVO AÑADIDO) -->
+                                    <form method="post" onsubmit="return confirmarAccion('archivar')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <!-- === CAMPO MOTIVO AÑADIDO AQUÍ === -->
+                                        <input type="text" name="motivo_archivo" placeholder="Motivo..." class="form-control form-control-sm archive-reason-input" required title="Motivo del archivo">
+                                        <!-- === FIN CAMPO MOTIVO === -->
+                                        <button type="submit" name="action" value="archivar" class="btn btn-dark btn-sm" data-action="Archivar" title="Archivar Usuario"><i class="bi bi-archive"></i></button>
+                                    </form>
+                                {% endif %}
+
+                                {% if not usuario.is_active %}
+                                    <!-- Formulario Activar (sin cambios de permiso) -->
+                                    <form method="post" onsubmit="return confirmarAccion('activar')" id="activar-form-{{ usuario.id }}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <input type="hidden" name="action" value="activar">
+                                        <button type="submit" class="btn btn-success btn-sm" data-action="Activar" title="Activar Usuario"><i class="bi bi-check-circle"></i></button>
+                                    </form>
+                                {% endif %}
+                                <!-- Enlace Editar (sin cambios de permiso) -->
+                                <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
+                            </td>
+                        </tr>
+                    {% empty %} {# Añadido para el caso sin usuarios #}
+                        <tr>
+                            <td colspan="5" class="text-center">No se encontraron usuarios.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!-- Fin table-responsive -->
+    </div> <!-- Fin container -->
+
+    <!-- Scripts -->
+    <script src="{% static 'js/mensajes_confirmacion_administracion_usuarios.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   
+</body>
+</html>

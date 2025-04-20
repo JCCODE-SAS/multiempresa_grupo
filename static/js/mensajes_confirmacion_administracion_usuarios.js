@@ -1,5 +1,5 @@
 function confirmarAccion(action) {
-    console.log("Acción:", action); // Agrega esta línea
+    console.log("Acción:", action); 
     let mensaje = "";
     if (action === 'cambiar_rol') {
         mensaje = "¿Estás seguro de que quieres cambiar el rol de este usuario?";
