@@ -47,6 +47,7 @@
                             <th>Dirección</th>
                             <th>País</th>
                             <th>Fecha Creación</th>
+                            <th>Estado</th> 
                             
                         </tr>
                     </thead>
@@ -60,7 +61,15 @@
                             <td>{{ empresa.direccion }}</td>
                             <td>{{ empresa.pais }}</td>
                             <td>{{ empresa.fecha_creacion }}</td>
-                            
+                            <td>
+                                
+                                {% if empresa.is_active %} {# Verifica si la empresa está activa #}
+                                    {# Muestra Activa/Inactiva con colores #}
+                                    <span class="badge bg-success">Activa</span> 
+                                {% else %}
+                                    <span class="badge bg-danger">Inactiva</span>
+                                {% endif %}
+                            </td> {# Celda para el estado #}
                         </tr>
                         {% endfor %}
                     </tbody>
