@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Empresas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'usuarios:panel_administrativo' %}">Panel de Control Administrativo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                     <li class="nav-item">
+                        <span class="nav-name" >Usuario: {{ user.username }}</span>
+                    </li>
+                </ul>
+                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'usuarios:logout' %}" id="logoutForm">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link" id="logoutButton">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Información de Empresas Existentes</h1>
+
+        {% if empresas %}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>NIT</th>
+                            <th>Correo Corporativo</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>País</th>
+                            <th>Fecha Creación</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empresa in empresas %}
+                        <tr>
+                            <td>{{ empresa.nombre }}</td>
+                            <td>{{ empresa.nit }}</td>
+                            <td>{{ empresa.correo_corporativo }}</td>
+                            <td>{{ empresa.telefono }}</td>
+                            <td>{{ empresa.direccion }}</td>
+                            <td>{{ empresa.pais }}</td>
+                            <td>{{ empresa.fecha_creacion }}</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                No hay empresas registradas aún.
+            </div>
+        {% endif %}
+
+        <div class="mt-3 text-center">
+             <a href="{% url 'usuarios:panel_administrativo' %}" class="btn btn-secondary">Volver al Panel</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('logoutButton').addEventListener('click', function(event) {
+                document.getElementById('logoutForm').submit()
+            });
+        });
+    </script>
+</body>
+</html>

@@ -8,3 +8,4 @@ chat_Gemini.txt
 servicios de mysql y  Apache.txt
 __pycache__
 * .pyc
+*.py[cod]

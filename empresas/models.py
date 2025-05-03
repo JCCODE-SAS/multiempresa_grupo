@@ -9,7 +9,8 @@ class Empresa(models.Model):
     direccion = models.TextField(verbose_name="Dirección")
     pais = models.CharField(max_length=100, verbose_name="País")
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
-
+    fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
+    is_active = models.BooleanField(default=False) # Campo para activar/desactivar la empresa
     class Meta:
         db_table = 'empresas'
         verbose_name = "Empresa"

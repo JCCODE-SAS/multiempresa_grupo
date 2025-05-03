@@ -247,18 +247,21 @@ def administracion_usuarios_view(request):
     Vista para administrar usuarios. Permite listar, filtrar, activar/desactivar,
     cambiar roles y archivar usuarios.
     """
+    # Obtención inicial de usuarios no archivados
     #usuarios = Usuario.objects.all().order_by('username')
     ids_archivados = UsuarioArchivado.objects.values_list('usuario_archivado_id', flat=True)
     usuarios = Usuario.objects.exclude(id__in=ids_archivados).order_by('username')
     roles = Roles.objects.all()
 
     # Filtros
+    # Lectura de parámetros GET
     filtro_username = request.GET.get('username', '')
     filtro_email = request.GET.get('email', '')
     filtro_rol = request.GET.get('rol', '')
     filtro_activo = request.GET.get('activo', '')
-
+    # Aplicación condicional de filtros
     if filtro_username:
+        # Se aplica el filtro sobre el QuerySet existente
         usuarios = usuarios.filter(username__icontains=filtro_username)
     if filtro_email:
         usuarios = usuarios.filter(email__icontains=filtro_email)
@@ -271,36 +274,42 @@ def administracion_usuarios_view(request):
         print(request.POST)  # Depuración
         action = request.POST.get('action')
         user_id = request.POST.get('user_id')
-        usuario = get_object_or_404(Usuario, id=user_id)
+        usuario = get_object_or_404(Usuario, id=user_id) # <--- SI user_id NO EXISTE -> 404
+
 
         if action == 'activar':
+             # SI ESTA COMPROBACIÓN FALLA, EL CÓDIGO DENTRO DEL IF NO SE EJECUTA
             if request.user.has_perm('usuarios.can_change_usuario_status'):
                 usuario.is_active = True
                 usuario.save()
                 print(f"Usuario {usuario.id} activado.")
             else:
-                # ... (manejar error de permiso) ...
+                # No hay acción si no tiene permiso (el 'else' está vacío o es 'pass')
                 pass # O messages.error(...)
 
         elif action == 'cambiar_rol':
+             # SI ESTA COMPROBACIÓN FALLA, EL CÓDIGO DENTRO DEL IF NO SE EJECUTA
              if request.user.has_perm('usuarios.can_change_usuario_rol'):
                 nuevo_rol_id = request.POST.get('nuevo_rol')
-                nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
+                   # SI nuevo_rol_id NO EXISTE EN Roles -> 404
+                nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)# <--- AQUÍ TAMBIÉN
                 usuario.rol = nuevo_rol
                 usuario.save()
 
              else:
-                # ... (manejar error de permiso) ...
+                # No hay acción si no tiene permiso
                 pass # O messages.error(...)
+             
         elif action == 'desactivar':
             if request.user.has_perm('usuarios.can_change_usuario_status'):
                 usuario.is_active = False
                 usuario.save()
             else:
-                # ... (manejar error de permiso) ...
+                # No hay acción si no tiene permiso
                 pass # O messages.error(...)
 
         elif action == 'archivar':
+            # SI ESTA COMPROBACIÓN FALLA, EL CÓDIGO DENTRO DEL IF NO SE EJECUTA
             # El permiso 'can_archive_usuario' ya se verifica aquí implícitamente
             # porque si el usuario no tuviera el permiso general para estar en la página,
             # no llegaría aquí. PERO es buena práctica verificarlo explícitamente
@@ -308,13 +317,14 @@ def administracion_usuarios_view(request):
             # Para mayor seguridad, puedes añadir la comprobación aquí también:
             if request.user.has_perm('usuarios.can_archive_usuario'):
                 motivo_archivo = request.POST.get('motivo_archivo', '')
+                 # SI ESTA CONDICIÓN ES FALSA (YA EXISTE), EL BLOQUE NO SE EJECUTA
                 if not UsuarioArchivado.objects.filter(usuario_archivado=usuario).exists():
                     UsuarioArchivado.objects.create(
                         usuario_archivado=usuario,
                         archivado_por=request.user,
                         motivo=motivo_archivo
                     )
-                    usuario.is_active = False
+                    usuario.is_active = False # Se desactiva al archivar
                     usuario.save()
                     # ... (mensaje opcional) ...
                 else:
