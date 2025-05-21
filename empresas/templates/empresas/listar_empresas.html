@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Empresas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'usuarios:panel_administrativo' %}">Panel de Control Administrativo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                     <li class="nav-item">
+                        <span class="nav-name" style="color: whitesmoke;" >Usuario: {{ user.username }}</span>
+                    </li>
+                </ul>
+                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'usuarios:logout' %}" id="logoutForm">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link" id="logoutButton">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Buscar Empresas</h1>
+
+        <form method="get" action="{% url 'empresas:listar_empresas' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar por nombre de empresa" name="q" value="{{ query }}">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </div>
+        </form>
+
+
+        {% if empresas %}
+            <div class="list-group">
+                {% for empresa in empresas %}
+                    {# Creamos un enlace a la vista de detalle. Necesitaremos definir 'detalle_empresa' en urls.py #}
+                    <a href="{% url 'empresas:detalle_empresa' empresa.id %}" class="list-group-item list-group-item-action">
+                        {{ empresa.nombre }}
+                        {# Opcional: Puedes mostrar el estado aquí también si quieres una pista rápida #}
+                        {% if empresa.is_active %} {# Usa is_active o activa según tu modelo #}
+                             <span class="badge bg-success float-end">Activa</span>
+                        {% else %}
+                             <span class="badge bg-danger float-end">Inactiva</span>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                {% if query %}
+                    No se encontraron empresas que coincidan con "{{ query }}".
+                {% else %}
+                    No hay empresas registradas aún.
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="mt-3 text-center">
+             <a href="{% url 'usuarios:panel_administrativo' %}" class="btn btn-secondary">Volver al Panel</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('logoutButton').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevenir el envío por defecto del formulario
+                document.getElementById('logoutForm').submit();
+            });
+        });
+    </script>
+</body>
+</html>
