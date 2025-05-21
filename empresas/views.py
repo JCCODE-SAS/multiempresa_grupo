@@ -9,6 +9,7 @@ from django.db.models import Q # Importa Q para búsquedas complejas
 @login_required # Asegura que solo usuarios autenticados puedan acceder a esta vista
 def crear_empresa(request):
     empresa_creada = False  # Variable para controlar si se muestra el modal
+    empresa_creada = False  # Variable para controlar si se muestra el modal
     if request.method == 'POST':
         form = EmpresaForm(request.POST)
         if form.is_valid():
