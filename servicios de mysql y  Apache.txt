@@ -28,3 +28,4 @@ Habilitar el inicio automático de MariaDB al arrancar el sistema:
 sudo systemctl enable mariadb
 Deshabilitar el inicio automático de MariaDB al arrancar el sistema:
 sudo systemctl disable mariadb
+probando actualizacion
