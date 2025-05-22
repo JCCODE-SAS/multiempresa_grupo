@@ -34,8 +34,11 @@ def crear_empresa(request):
                 messages.error(request, 'No se pudo registrar la empresa debido a datos duplicados.')
             else:
                 try:
-                    form.save()
+                    empresa = form.save(commit=False)
+                    empresa.usuario_creador = request.user  # Asignar el usuario creador
+                    empresa.save()  # Guardar la empresa en la base de datos
                     empresa_creada = True  # Marca que la empresa fue creada exitosamente
+                
                 except IntegrityError:
                     messages.error(request, 'Error: Ya existe una empresa registrada con ese Nombre o NIT.')
                 except Exception as e:

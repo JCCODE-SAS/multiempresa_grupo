@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'roles',
     'seguridad',
     'empresas',
+    'admin_empresas',
 
     # Agregamos la app que creamos
     
@@ -100,9 +101,9 @@ WSGI_APPLICATION = 'Multiempresa.wsgi.application' # Configura la aplicación WS
 DATABASES = { # Configura la base de datos de Django
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Cambiamos SQLite por MySQL
-        'NAME': 'multiempresa_3',  # Nombre de la base de datos en MySQL
+        'NAME': 'multiempresa',  # Nombre de la base de datos en MySQL
         'USER': 'root',       # Usuario de MySQL
-        'PASSWORD': '', # Contraseña de MySQL
+        'PASSWORD': '1983', # Contraseña de MySQL
         'HOST': 'localhost',        # Dirección del servidor MySQL (usa IP si es remoto)
         'PORT': '3306',             # Puerto de MySQL (3306 por defecto)
         'OPTIONS':{         # Opciones adicionales de MySQL

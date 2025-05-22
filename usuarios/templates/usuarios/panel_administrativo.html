@@ -39,7 +39,7 @@
             <h2 class="mb-4 text-center">Panel de Control Administrativo</h2>
             <div class="list-group">
                 <a href="{% url 'empresas:crear_empresa' %}" class="list-group-item list-group-item-action">1. Crear Nueva Empresa</a>
-                <a href="#" class="list-group-item list-group-item-action">2. Administrar Empresas</a>
+                <a href="{% url 'admin_empresas:lista_empresas' %}"  class="list-group-item list-group-item-action">2. Administrar Empresas</a>
                 <a href="{% url 'empresas:listar_empresas' %}" class="list-group-item list-group-item-action">3. Información de Empresas Existentes</a>
                 <a href="{% url 'usuarios:administracion_usuarios' %}" class="list-group-item list-group-item-action">4. Administrador de Usuarios</a>
                 <a href="#" class="list-group-item list-group-item-action">5. Auditoría</a>

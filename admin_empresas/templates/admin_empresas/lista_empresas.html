@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Empresas</title>
+    <style>
+        /* General */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9; /* Fondo claro */
+            color: #333; /* Texto oscuro */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1500px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        /* Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+            text-align: left;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #007bff; /* Azul sobrio */
+            color: #ffffff;
+        }
+
+        thead th {
+            padding: 15px;
+            text-align: center;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Alternar colores */
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1; /* Efecto hover */
+        }
+
+        td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        td a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            color: #0056b3;
+        }
+
+        /* Botones */
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Empresas Registradas</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>NIT</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>País</th>
+                    <th>Estado</th>
+                    <th>Fecha de Creación</th>
+                    <th>Usuario Creador</th>
+                    <th>Última Actualización</th>
+                    <th>Último Usuario Editor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empresa in empresas %}
+                <tr>
+                    <td>{{ empresa.nombre }}</td>
+                    <td>{{ empresa.nit }}</td>
+                    <td>{{ empresa.correo_corporativo }}</td>
+                    <td>{{ empresa.telefono }}</td>
+                    <td>{{ empresa.direccion }}</td>
+                    <td>{{ empresa.pais }}</td>
+                    <td>
+                        {% if empresa.is_active %}
+                            Activa
+                        {% else %}
+                            Inactiva
+                        {% endif %}
+                    </td>
+                    <td>{{ empresa.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if empresa.usuario_creador %}
+                            {{ empresa.usuario_creador.username }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ empresa.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if empresa.usuario_editor %}
+                            {{ empresa.usuario_editor.username }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_empresas:editar_empresa' empresa.id %}" class="btn">Editar</a>
+                        <a href="{% url 'admin_empresas:activar_desactivar_empresa' empresa.id %}" class="btn btn-secondary">
+                            {% if empresa.is_active %}Desactivar{% else %}Activar{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <div class="actions">
+                    
+                    <a href="{% url 'usuarios:panel_administrativo' %}" class="btn cancelar">Atras</a>
+                </div>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

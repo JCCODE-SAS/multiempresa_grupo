@@ -1,5 +1,3 @@
-# usuarios/views.py
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
@@ -20,7 +18,6 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
-
 """
 Este módulo define las vistas (controladores) de la aplicación 'usuarios'.
 Contiene las funciones que gestionan las solicitudes HTTP relacionadas con:
@@ -34,6 +31,7 @@ from .models import Usuario, IntentosFallidos, Sesiones, CambioContrasena, Usuar
 
 def register_view(request):
     if request.method == 'POST':
+        
         username = request.POST.get('username').strip()
         password = request.POST.get('password').strip()
         password2 = request.POST.get('password2').strip()
