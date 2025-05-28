@@ -1,0 +1,24 @@
+<h1>Listado de Empresas</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>NIT</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empresa in empresas %}
+        <tr>
+            <td>{{ empresa.nombre }}</td>
+            <td>{{ empresa.nit }}</td>
+            <td>{{ empresa.correo_corporativo }}</td>
+            <td>
+                <a href="{% url 'empresas:detalle_empresa' empresa.id %}">Ver Detalle</a> 
+                <a href="{% url 'empresas:historial_actividad' empresa.id %}">Historial</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

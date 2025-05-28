@@ -1,0 +1,11 @@
+<h1>Detalle de la Empresa</h1>
+<p><strong>Nombre:</strong> {{ empresa.nombre }}</p>
+<p><strong>NIT:</strong> {{ empresa.nit }}</p>
+<p><strong>Correo:</strong> {{ empresa.correo_corporativo }}</p>
+<p><strong>Teléfono:</strong> {{ empresa.telefono }}</p>
+<p><strong>Dirección:</strong> {{ empresa.direccion }}</p>
+<p><strong>País:</strong> {{ empresa.pais }}</p>
+<p><strong>Estado:</strong> {% if empresa.estado %} Activa {% else %} Inactiva {% endif %}</p>
+<p><strong>Fecha de Creación:</strong> {{ empresa.fecha_creacion }}</p>
+<p><strong>Última Actualización:</strong> {{ empresa.fecha_actualizacion }}</p>
+<a href="{% url 'empresas:listar_empresas' %}">Volver al listado</a>

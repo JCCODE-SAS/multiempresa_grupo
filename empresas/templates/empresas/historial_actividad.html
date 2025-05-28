@@ -1,0 +1,10 @@
+<h1>Historial de Actividades y Estado de Cuenta</h1>
+<p><strong>Empresa:</strong> {{ empresa.nombre }}</p>
+<ul>
+    {% for actividad in historial %}
+    <li>{{ actividad }}</li>
+    {% empty %}
+    <li>No hay actividades registradas.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'empresas:listar_empresas' %}">Volver al listado</a>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import EmpresaForm
 from .models import Empresa
@@ -44,3 +44,23 @@ def crear_empresa(request):
     context = {'form': form, 'empresa_creada': empresa_creada}
     return render(request, 'empresas/crear_empresa.html', context)
 
+
+def listar_empresas(request):
+    empresas = Empresa.objects.all()
+    return render(request, 'empresas/listar_empresas.html', {'empresas': empresas})
+
+
+def detalle_empresa(request, empresa_id):
+    
+    empresa = get_object_or_404(Empresa, pk=empresa_id)
+    context = {
+        'empresa': empresa,
+        
+    }
+    return render(request, 'empresas/detalle_empresa.html',context)
+
+def historial_actividad(request, pk):
+    empresa = get_object_or_404(Empresa, pk=pk)
+    # Aquí puedes agregar lógica para obtener el historial de actividades y estado de cuenta
+    historial = []  # Ejemplo: lista vacía para el historial
+    return render(request, 'empresas/historial_actividad.html', {'empresa': empresa, 'historial': historial})
