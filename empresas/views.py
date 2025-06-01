@@ -21,7 +21,7 @@ def crear_empresa(request):
 
             # Validaciones personalizadas de duplicados
             if email and Empresa.objects.filter(correo_corporativo__iexact=email).exists():
-                form.add_error('email', 'Este correo electrónico ya está registrado.')
+                form.add_error('correo_corporativo', 'Este correo electrónico ya está registrado.')
                 hay_duplicados = True
             if telefono and Empresa.objects.filter(telefono=telefono).exists():
                 form.add_error('telefono', 'Este número de teléfono ya está registrado.')

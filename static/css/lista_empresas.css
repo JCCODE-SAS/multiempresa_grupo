@@ -1,0 +1,28 @@
+/* Personalización específica para lista_empresas.html */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+.table {
+    min-width: 1200px;
+    width: 100%;
+}
+@media (max-width: 1400px) {
+    .table {
+        min-width: 900px;
+        font-size: 0.98rem;
+    }
+}
+@media (max-width: 992px) {
+    .table {
+        min-width: 700px;
+        font-size: 0.95rem;
+    }
+}
+@media (max-width: 768px) {
+    .table {
+        min-width: 600px;
+        font-size: 0.92rem;
+    }
+}

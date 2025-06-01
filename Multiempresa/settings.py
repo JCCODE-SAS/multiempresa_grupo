@@ -103,7 +103,7 @@ DATABASES = { # Configura la base de datos de Django
         'ENGINE': 'django.db.backends.mysql',  # Cambiamos SQLite por MySQL
         'NAME': 'multiempresa',  # Nombre de la base de datos en MySQL
         'USER': 'root',       # Usuario de MySQL
-        'PASSWORD': '1983', # Contraseña de MySQL
+        'PASSWORD': '', # Contraseña de MySQL
         'HOST': 'localhost',        # Dirección del servidor MySQL (usa IP si es remoto)
         'PORT': '3306',             # Puerto de MySQL (3306 por defecto)
         'OPTIONS':{         # Opciones adicionales de MySQL

@@ -1,0 +1,23 @@
+/* navbar_admin.css: estilos específicos para la navbar de administración de usuarios */
+.navbar-admin {
+    background-color: #a86e17 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.navbar-admin .navbar-brand, .navbar-admin .nav-link, .navbar-admin .nav-link.disabled {
+    color: #fff !important;
+}
+.navbar-admin .nav-link.text-danger {
+    color: #ffdddd !important;
+}
+.navbar-admin .nav-link.text-danger:hover {
+    color: #ff4d4d !important;
+}
+.navbar-admin .bi {
+    vertical-align: middle;
+}
+.navbar-brand, .navbar-brand:visited, .navbar-brand:active {
+    color: #fff !important;
+}
+.navbar-brand:hover {
+    color: #ffe0b2 !important;
+}

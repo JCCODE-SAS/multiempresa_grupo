@@ -1,86 +1,122 @@
-/* modulo_gestionusuarios.css */
-body {
-    background-color: #a86815;
-    background-image: linear-gradient(190deg, #fcfdfd 0%, #a86815 100%);
-}
-table {
-    width: 100%; /* El ancho de la tabla será el 100% del contenedor padre */
-    margin: 20px auto;
-    border-collapse: collapse;
-}
+@import url('styles.css'); /* Importa el diseño base global */
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f0f0f0;
-}
+/* --- Personalización específica para administración de usuarios --- */
 
 .action-buttons {
-    display: flex; /* Usamos flexbox para alinear los botones */
-    flex-wrap: wrap; /* Permitimos que los botones se envuelvan a la siguiente línea en pantallas pequeñas */
-    gap: 5px; /* Agregamos un pequeño espacio entre los botones */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
-.action-buttons form {
-    margin: 0; /* Eliminamos los márgenes predeterminados de los formularios */
+.action-buttons form,
+.action-buttons a {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    vertical-align: middle;
 }
 
-/* Media queries para pantallas pequeñas */
-@media (max-width: 768px) {
-    table {
-        font-size: 0.8em; /* Reducimos el tamaño de la fuente en pantallas pequeñas */
+.action-buttons .form-control-sm,
+.action-buttons .form-select-sm {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.action-buttons .archive-reason-input {
+    width: 150px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Personalización de la tabla de usuarios */
+.table-responsive {
+    overflow-x: auto;
+    min-width: 100%;
+}
+.table {
+    width: 100%;
+    min-width: 900px;
+    table-layout: auto;
+}
+.table th, .table td {
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+}
+.table thead th {
+    background-color: #a86e17 !important;
+    color: #fff !important;
+    font-weight: bold;
+    border-color: #a86e17 !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f8f5ef;
+}
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #fff;
+}
+.table-hover > tbody > tr:hover {
+    background-color: #ffe0b2 !important;
+}
+.table td.text-break {
+    word-break: break-all;
+    max-width: 260px;
+}
+
+.username-color {
+    color: #a86e17 !important;
+}
+
+@media (max-width: 1200px) {
+    .table th, .table td {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.3rem;
     }
+}
 
+@media (max-width: 991.98px) {
+    .container, .container-fluid {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+    .table-responsive {
+        min-width: 100vw;
+        padding: 0;
+    }
+    .table th, .table td {
+        font-size: 0.92rem;
+        padding: 0.4rem 0.2rem;
+        white-space: normal;
+        max-width: 120px;
+        word-break: break-word;
+    }
     .action-buttons {
-        flex-direction: column; /* Apilamos los botones verticalmente en pantallas pequeñas */
-        align-items: stretch; /* Estiramos los botones para que ocupen todo el ancho disponible */
+        flex-direction: column;
+        gap: 2px;
     }
-
-    .action-buttons form {
-        width: 100%; /* Hacemos que los formularios ocupen todo el ancho disponible */
+    .action-buttons form, .action-buttons a {
+        margin-right: 0;
+        margin-bottom: 3px;
     }
-
-    .action-buttons button, .action-buttons a {
-        width: 100%; /* Hacemos que los botones ocupen todo el ancho disponible */
+    .archive-reason-input {
+        width: 100% !important;
+        min-width: 80px;
     }
 }
- /* Estilos adicionales para alinear mejor los elementos en la celda de acciones */
- .action-buttons form,
- .action-buttons a {
-     display: inline-block; /* Hace que los formularios y enlaces se comporten como bloques en línea */
-     margin-right: 5px; /* Espacio a la derecha de cada elemento */
-     margin-bottom: 5px; /* Espacio debajo por si se envuelven */
-     vertical-align: middle; /* Alinea verticalmente los elementos */
- }
- .action-buttons .form-control-sm,
- .action-buttons .form-select-sm {
-     width: auto; /* Ajusta el ancho del input/select */
-     display: inline-block; /* Permite que esté en línea con el botón */
-     vertical-align: middle; /* Alinea con el botón */
- }
- .action-buttons .archive-reason-input {
-      width: 150px; /* Ancho específico para el campo de motivo */
- }
- /* Estilos mínimos para que el campo motivo y botón se vean mejor */
- .action-buttons form,
- .action-buttons a {
-     display: inline-block; /* Elementos en línea */
-     margin-right: 5px;
-     margin-bottom: 5px;
-     vertical-align: middle; /* Alineación vertical */
- }
- .action-buttons .archive-reason-input {
-      width: 150px; /* Ancho para el campo motivo */
-      display: inline-block; /* Para que esté en línea */
-      vertical-align: middle;
- }
- .table th, .table td {
-     vertical-align: middle;
- }
- .username-color {
-    color: rgb(229, 231, 229); /* Reemplaza con el color que desees */
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+    .table th, .table td {
+        font-size: 0.85rem;
+        padding: 0.2rem 0.1rem;
+        max-width: 80px;
+    }
 }
+body {
+    margin: 5px  !important;
+}   

@@ -1,223 +1,95 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Empresa</title>
-    <style>
-        /* General */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9; /* Fondo claro */
-            color: #333; /* Texto oscuro */
-            margin: 0;
-            padding: 0;
-        }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/editar_empresa.css' %}">
 
-        /* Contenedor principal */
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #007bff;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        /* Formulario */
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"] {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
-            outline: none;
-        }
-
-        /* Botones */
-        button {
-            padding: 10px 15px;
-            font-size: 1rem;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .cancelar {
-            background-color: #6c757d;
-        }
-
-        .cancelar:hover {
-            background-color: #5a6268;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content button {
-            margin: 10px;
-        }
-
-        /* Mensaje de éxito */
-        .mensaje {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            font-size: 1rem;
-            text-align: center;
-        }
-
-        .mensaje.exito {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #c3e6cb;
-            text-align: center;
-        }
-
-        .actions .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            font-size: 1rem;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .actions .btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Editar Empresa</h1>
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
+                <div class="card p-4 shadow">
+                    <h2 class="mb-4 text-center">Editar Empresa</h2>
 
-        <!-- Mostrar mensaje de éxito -->
-        {% if cambio_exitoso %}
-            <div class="mensaje exito">
-                ¡Los cambios se han guardado exitosamente!
-            </div>
-            <div class="actions">
-                <a href="{% url 'admin_empresas:lista_empresas' %}" class="btn">Volver</a>
-            </div>
-        {% else %}
-            <form id="editarEmpresaForm" method="POST">
-                {% csrf_token %}
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" value="{{ empresa.nombre }}" required>
+                    <!-- Mostrar mensaje de éxito -->
+                    {% if cambio_exitoso %}
+                        <div class="alert alert-success" role="alert">
+                            ¡Los cambios se han guardado exitosamente!
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <a href="{% url 'admin_empresas:lista_empresas' %}" class="btn btn-primary">Volver</a>
+                        </div>
+                    {% else %}
+                        <form id="editarEmpresaForm" method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre:</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" value="{{ empresa.nombre }}" required>
+                            </div>
 
-                <label for="nit">NIT:</label>
-                <input type="text" id="nit" name="nit" value="{{ empresa.nit }}" required>
+                            <div class="mb-3">
+                                <label for="nit" class="form-label">NIT:</label>
+                                <input type="text" id="nit" name="nit" class="form-control" value="{{ empresa.nit }}" required>
+                            </div>
 
-                <label for="correo">Correo Electrónico:</label>
-                <input type="email" id="correo" name="correo" value="{{ empresa.correo_corporativo }}" required>
+                            <div class="mb-3">
+                                <label for="correo" class="form-label">Correo Electrónico:</label>
+                                <input type="email" id="correo" name="correo" class="form-control" value="{{ empresa.correo_corporativo }}" required>
+                            </div>
 
-                <label for="telefono">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono" value="{{ empresa.telefono }}" required>
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">Teléfono:</label>
+                                <input type="text" id="telefono" name="telefono" class="form-control" value="{{ empresa.telefono }}" required>
+                            </div>
 
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion" value="{{ empresa.direccion }}" required>
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">Dirección:</label>
+                                <input type="text" id="direccion" name="direccion" class="form-control" value="{{ empresa.direccion }}" required>
+                            </div>
 
-                <label for="pais">País:</label>
-                <input type="text" id="pais" name="pais" value="{{ empresa.pais }}" required>
+                            <div class="mb-3">
+                                <label for="pais" class="form-label">País:</label>
+                                <input type="text" id="pais" name="pais" class="form-control" value="{{ empresa.pais }}" required>
+                            </div>
 
-                <div class="actions">
-                    <button type="button" id="confirmarCambiosBtn">Confirmar cambios</button>
-                    <a href="{% url 'admin_empresas:lista_empresas' %}" class="btn cancelar">Atras</a>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" id="confirmarCambiosBtn" class="btn btn-secondary">Confirmar cambio</button>
+                                <a href="{% url 'admin_empresas:lista_empresas' %}" class="btn btn-secondary">Atras</a>
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
-            </form>
-        {% endif %}
-    </div>
-
-    <!-- Modal de confirmación -->
-    <div id="modalConfirmacion" class="modal">
-        <div class="modal-content">
-            <p id="modalTexto">¿Está seguro de que desea confirmar los cambios?</p>
-            <button id="confirmarBtn">Sí</button>
-            <button id="cancelarBtn">No</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const modal = document.getElementById('modalConfirmacion');
-        const modalTexto = document.getElementById('modalTexto');
-        const confirmarCambiosBtn = document.getElementById('confirmarCambiosBtn');
-        const confirmarBtn = document.getElementById('confirmarBtn');
-        const cancelarBtn = document.getElementById('cancelarBtn');
-        const form = document.getElementById('editarEmpresaForm');
+    <!-- Modal de confirmación -->
+    <div id="modalConfirmacion" class="modal fade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Confirmar cambios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalTexto">¿Está seguro de que desea confirmar los cambios?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmarBtn" class="btn btn-success"data-bs-dismiss="modal">Sí, confirmar</button>
+                    <button id="cancelarBtn" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        confirmarCambiosBtn.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-
-        confirmarBtn.addEventListener('click', () => {
-            modal.style.display = 'none'; // Cierra el modal
-            form.submit(); // Envía el formulario
-        });
-
-        cancelarBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/editar_empresa.js' %}"></script>
 </body>
 </html>

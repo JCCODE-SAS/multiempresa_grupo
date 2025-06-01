@@ -1,0 +1,14 @@
+/* CSS específico para editar_usuario.html */
+/* Puedes agregar aquí estilos personalizados si lo necesitas. El diseño base ya está en administracion_usuarios.css */
+
+/* Personalización específica para editar_usuario.html */
+.btn.btn-primary {
+    background-color: #a86e17 !important;
+    border-color: #a86e17 !important;
+    color: #fff !important;
+}
+.btn.btn-primary:hover {
+    background-color: #7a4c0e !important;
+    border-color: #7a4c0e !important;
+    color: #fff !important;
+}

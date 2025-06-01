@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from roles.models import Roles
 import uuid  # Importa la librería uuid
 from django.conf import settings # Importar settings para referenciar al User model
+from django.contrib.auth.base_user import BaseUserManager
 # --- FIN NUEVA IMPORTACIÓN ---
 """
 Este módulo define los modelos de datos para la aplicación 'usuarios'.
@@ -10,6 +11,28 @@ Estos modelos se utilizan para gestionar la información de los usuarios,
 incluyendo datos de perfil, intentos de inicio de sesión fallidos, sesiones activas,
 y registros de cambios de contraseña.
 """
+class UsuarioManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El email es obligatorio')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)  # Siempre activo
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('El superusuario debe tener is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('El superusuario debe tener is_superuser=True.')
+        return self.create_user(email, password, **extra_fields)
+
 class Usuario(AbstractUser, PermissionsMixin):
     """
     Representa un usuario del sistema. Extiende el modelo AbstractUser de Django.  
@@ -21,6 +44,7 @@ class Usuario(AbstractUser, PermissionsMixin):
     fecha_ultima_sesion = models.DateTimeField(blank=True, null=True) # Fecha y hora de la última sesión del usuario.
     token_recuperacion = models.UUIDField(null=True, blank=True, editable=False)  # Token único para recuperación de contraseña.
     is_active = models.BooleanField(default=False)  # Agrega este campo
+    objects = UsuarioManager()  # Usar el manager personalizado
     USERNAME_FIELD = 'email'  # Campo que se usará para autenticar al usuario.
     REQUIRED_FIELDS = ['username'] # Campos requeridos para crear un usuario.
 
