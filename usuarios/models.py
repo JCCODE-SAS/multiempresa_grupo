@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from roles.models import Roles
 import uuid  # Importa la librería uuid
 from django.conf import settings # Importar settings para referenciar al User model
+from django.contrib.auth.base_user import BaseUserManager
 # --- FIN NUEVA IMPORTACIÓN ---
 """
 Este módulo define los modelos de datos para la aplicación 'usuarios'.
@@ -10,6 +11,28 @@ Estos modelos se utilizan para gestionar la información de los usuarios,
 incluyendo datos de perfil, intentos de inicio de sesión fallidos, sesiones activas,
 y registros de cambios de contraseña.
 """
+class UsuarioManager(BaseUserManager):
+    use_in_migrations = True
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El email es obligatorio')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)  # Siempre activo
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('El superusuario debe tener is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('El superusuario debe tener is_superuser=True.')
+        return self.create_user(email, password, **extra_fields)
+
 class Usuario(AbstractUser, PermissionsMixin):
     """
     Representa un usuario del sistema. Extiende el modelo AbstractUser de Django.  
@@ -21,6 +44,7 @@ class Usuario(AbstractUser, PermissionsMixin):
     fecha_ultima_sesion = models.DateTimeField(blank=True, null=True) # Fecha y hora de la última sesión del usuario.
     token_recuperacion = models.UUIDField(null=True, blank=True, editable=False)  # Token único para recuperación de contraseña.
     is_active = models.BooleanField(default=False)  # Agrega este campo
+    objects = UsuarioManager()  # Usar el manager personalizado
     USERNAME_FIELD = 'email'  # Campo que se usará para autenticar al usuario.
     REQUIRED_FIELDS = ['username'] # Campos requeridos para crear un usuario.
 
@@ -29,11 +53,17 @@ class Usuario(AbstractUser, PermissionsMixin):
         verbose_name = "Usuario del Sistema"    # Nombre en singular para el modelo en el panel de administración.
         verbose_name_plural = "Usuarios del Sistema" # Nombre en plural para el modelo en el panel de administración.
         permissions = [
-            ("can_access_user_administration", "Can access user administration page"),# --- PERMISO PARA ACCEDER A LA VISTA ---
-            ("can_view_usuario_custom", "Can view usuario custom"), #permiso para ver un usuario
-            ("can_change_usuario_status", "Can change usuario status"), #permiso para cambiar el estado de un usuario
-            ("can_change_usuario_rol", "Can change usuario rol"), #permiso para cambiar el rol de un usuario 
-            ("can_archive_usuario", "Can archive usuario"),  #permiso para archivar usuarios
+            ("puede_crear_empresa", "Puede crear empresa"),
+            ("puede_editar_empresa", "Puede editar empresa"),
+            ("puede_activar_desactivar_empresa", "Puede activar/desactivar empresa"),
+            ("puede_ver_empresa", "Puede ver información de empresa"),
+            ("puede_cambiar_rol_usuario", "Puede cambiar el rol de usuario"),
+            ("puede_activar_desactivar_usuario", "Puede activar/desactivar usuario"),
+            ("puede_archivar_usuario", "Puede archivar usuario"),
+            ("puede_editar_usuario", "Puede editar usuario"),
+            ("puede_crear_rol", "Puede crear rol"),
+            ("puede_editar_rol", "Puede editar rol"),
+            ("puede_eliminar_rol", "Puede eliminar rol"),
         ]
     def __str__(self):
         return self.username    # Devuelve el nombre de usuario como representación en cadena del objeto.

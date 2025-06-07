@@ -216,7 +216,7 @@ def restablecer_contrasena_view(request, usuario_id, token):
     return render(request, 'usuarios/restablecer_contrasena.html', {'usuario': usuario})
 
 @login_required
-@permission_required('usuarios.view_usuario', raise_exception=True)
+@permission_required('usuarios.puede_gestionar_usuarios', raise_exception=True)
 def administracion_usuarios_view(request):
     print("--- DEBUG: administracion_usuarios_view iniciada ---")
     """
@@ -249,73 +249,36 @@ def administracion_usuarios_view(request):
         usuario = get_object_or_404(Usuario, id=user_id)
         print("--- DEBUG: Justo antes de la cadena if/elif de acciones ---")
         if action == 'activar':
-            print("--- DEBUG: Entrando en el bloque if para acción: activar ---") # Debug
-            if request.user.has_perm('usuarios.can_change_usuario_status'):
-                print("Usuario logueado tiene permiso para cambiar estado (activar).") # Debug
-                usuario.is_active = True
-                print("Intentando guardar usuario (activar)...") # Debug
-                usuario.save()
-                print(f"Usuario {usuario.id} activado.") # Debug
-            else:
-                print("Usuario logueado NO tiene permiso para cambiar estado (activar).") # Debug
-                pass
-
+            usuario.is_active = True
+            usuario.save()
+            print(f"Usuario {usuario.id} activado.") # Debug
         elif action == 'cambiar_rol':
-             print(f"--- DEBUG: Entrando en el bloque elif para acción: {action} ---") # Debug: Added this print
-             print("Acción: cambiar_rol") # Debug: Uncommented
-             if request.user.has_perm('usuarios.can_change_usuario_rol'):
-                print("Usuario logueado tiene permiso para cambiar rol.") # Debug: Uncommented
-                nuevo_rol_id = request.POST.get('nuevo_rol')
-                print(f"Nuevo Rol ID: {nuevo_rol_id}") # Debug: Uncommented
-                nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
-                print(f"Nuevo Rol encontrado: {nuevo_rol.nombre_rol}") # Debug: Uncommented
-                usuario.rol = nuevo_rol
-                print(f"Usuario {usuario.username} rol AHORA es: {usuario.rol.nombre_rol}") # Debug: Uncommented
-                print("--- Justo antes de usuario.save() para cambiar_rol ---") # Debug: Uncommented
-                usuario.save() # <-- Uncommented this crucial line
-                print("--- Justo DESPUÉS de usuario.save() para cambiar_rol ---") # Debug: Uncommented
-
-             else:
-                print("Usuario logueado NO tiene permiso para cambiar rol.") # Debug: Uncommented
-                pass
-
+            nuevo_rol_id = request.POST.get('nuevo_rol')
+            nuevo_rol = get_object_or_404(Roles, id_rol=nuevo_rol_id)
+            usuario.rol = nuevo_rol
+            usuario.user_permissions.set(nuevo_rol.permisos.all())
+            usuario.save()
+            from django.contrib.sessions.models import Session
+            sessions = Session.objects.filter(expire_date__gte=timezone.now())
+            for session in sessions:
+                data = session.get_decoded()
+                if data.get('_auth_user_id') == str(usuario.id):
+                    session.delete()
         elif action == 'desactivar':
-            print("--- DEBUG: Entrando en el bloque elif para acción: desactivar ---") # Debug
-            if request.user.has_perm('usuarios.can_change_usuario_status'):
-                print("Usuario logueado tiene permiso para cambiar estado (desactivar).") # Debug
-                usuario.is_active = False
-                print("Intentando guardar usuario (desactivar)...") # Debug
-                usuario.save()
-                print(f"Usuario {usuario.id} desactivado.") # Debug
-            else:
-                print("Usuario logueado NO tiene permiso para cambiar estado (desactivar).") # Debug
-                pass
-
+            usuario.is_active = False
+            usuario.save()
+            print(f"Usuario {usuario.id} desactivado.") # Debug
         elif action == 'archivar':
-            print("--- DEBUG: Entrando en el bloque elif para acción: archivar ---") # Debug
-            if request.user.has_perm('usuarios.can_archive_usuario'): # Verifica si tienes este permiso
-                print("Usuario logueado tiene permiso para archivar.") # Debug
-                motivo_archivo = request.POST.get('motivo_archivo', '')
-                print(f"Motivo archivo: {motivo_archivo}") # Debug
-                if not UsuarioArchivado.objects.filter(usuario_archivado=usuario).exists():
-                    print("Usuario no estaba previamente archivado. Creando registro de archivo...") # Debug
-                    UsuarioArchivado.objects.create(
-                        usuario_archivado=usuario,
-                        archivado_por=request.user,
-                        motivo=motivo_archivo
-                    )
-                    print("Registro de archivo creado. Desactivando usuario...") # Debug
-                    usuario.is_active = False # Se desactiva al archivar
-                    print("Intentando guardar usuario (archivar/desactivar)...") # Debug
-                    usuario.save() # <-- Uncommented this crucial line
-                    print(f"Usuario {usuario.id} archivado y desactivado.") # Debug
-                else:
-                    print("Usuario ya estaba archivado.") # Debug
-                    pass
-            else:
-                print("Usuario logueado NO tiene permiso para archivar.") # Debug
-                pass
-
+            motivo_archivo = request.POST.get('motivo_archivo', '')
+            if not UsuarioArchivado.objects.filter(usuario_archivado=usuario).exists():
+                UsuarioArchivado.objects.create(
+                    usuario_archivado=usuario,
+                    archivado_por=request.user,
+                    motivo=motivo_archivo
+                )
+                usuario.is_active = False
+                usuario.save()
+                print(f"Usuario {usuario.id} archivado y desactivado.") # Debug
         return redirect('usuarios:administracion_usuarios')
 
     context = {
@@ -329,7 +292,7 @@ def administracion_usuarios_view(request):
     return render(request, 'usuarios/administracion_usuarios.html', context)
 
 @login_required
-@permission_required('usuarios.change_usuario', raise_exception=True)
+@permission_required('usuarios.puede_gestionar_usuarios', raise_exception=True)
 def editar_usuario_view(request, usuario_id):
     usuario = get_object_or_404(Usuario, id=usuario_id)
     if request.method == 'POST':

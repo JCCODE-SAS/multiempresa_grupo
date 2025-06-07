@@ -6,34 +6,13 @@
     <title>Administración de Usuarios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/navbar_admin.css' %}">
     <link rel="stylesheet" href="{% static 'css/administracion_usuarios.css' %}"> <!-- Agregamos el archivo de estilos personalizado -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Panel de Control Administrativo</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    
-                    <li class="nav-item">
-                        <span class="nav-name username-color" >Usuario: {{ user.username }}</span>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <form method="post" action="{% url 'usuarios:logout' %}" id="logoutForm">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link nav-link" id="logoutButton">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'usuarios/navbar_admin.html' %}
+
     <div class="container mt-4"> <!-- Añadido container para mejor espaciado -->
         <h1>Administración de Usuarios</h1>
 
@@ -74,7 +53,7 @@
             <table class="table table-striped table-hover">
                 <thead class="table-dark"> <!-- Usando table-dark para el encabezado -->
                     <tr>
-                        <th>Username</th>
+                        <th class="username-column">Username</th>
                         <th>Email</th>
                         <th>Rol</th>
                         <th>Estado</th> <!-- Movido Estado antes de Acciones -->
@@ -84,7 +63,7 @@
                 <tbody>
                     {% for usuario in usuarios %}
                         <tr>
-                            <td>{{ usuario.username }}</td>
+                            <td class="username-column">{{ usuario.username }}</td>
                             <td>{{ usuario.email }}</td>
                             <td>{{ usuario.rol.nombre_rol|default:"Sin Rol" }}</td>
                             <td>
@@ -95,50 +74,48 @@
                                 {% endif %}
                             </td>
                             <td class="action-buttons">
-                                <!-- Formulario Cambiar Rol (sin cambios de permiso) -->
-                                <form method="post" data-action-type="cambiar_rol"> {# Elimina onsubmit, añade data-action-type #}
-                                    {% csrf_token %}
-                                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                                    <select name="nuevo_rol" class="form-select form-select-sm d-inline-block" title="Cambiar Rol" style="width: auto;"> <!-- Estilo para select -->
-                                        {% for rol in roles %}
-                                            <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol" title="Guardar Cambios "><i class="bi bi-pencil-square"></i></button>
-                                </form>
+                                {% if perms.usuarios.puede_gestionar_usuarios %}
+                                    <!-- Formulario Cambiar Rol -->
+                                    <form method="post" data-action-type="cambiar_rol">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <select name="nuevo_rol" class="form-select form-select-sm d-inline-block" title="Cambiar Rol" style="width: auto;">
+                                            {% for rol in roles %}
+                                                <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol" title="Guardar Cambios "><i class="bi bi-pencil-square"></i></button>
+                                    </form>
 
-                                
-
-                                {% if usuario.is_active %}
-                                    <!-- Formulario Desactivar (sin cambios de permiso) -->
+                                    {% if usuario.is_active %}
+                                    <!-- Formulario Desactivar -->
                                     <form method="post" data-action-type="desactivar">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
                                         <button type="submit" name="action" value="desactivar" class="btn btn-danger btn-sm" data-action="Desactivar" title="Desactivar Usuario"><i class="bi bi-stop-circle"></i></button>
                                     </form>
-
-                                    <!-- Formulario Archivar (CON CAMPO MOTIVO AÑADIDO) -->
+                                    <!-- Formulario Archivar -->
                                     <form method="post" data-action-type="archivar">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                                        <!-- === CAMPO MOTIVO AÑADIDO AQUÍ === -->
                                         <input type="text" name="motivo_archivo" placeholder="Motivo..." class="form-control form-control-sm archive-reason-input" required title="Motivo del archivo">
-                                        <!-- === FIN CAMPO MOTIVO === -->
                                         <button type="submit" name="action" value="archivar" class="btn btn-dark btn-sm" data-action="Archivar" title="Archivar Usuario"><i class="bi bi-archive"></i></button>
                                     </form>
-                                {% endif %}
+                                    {% endif %}
 
-                                {% if not usuario.is_active %}
-                                    <!-- Formulario Activar (sin cambios de permiso) -->
+                                    {% if not usuario.is_active %}
+                                    <!-- Formulario Activar -->
                                     <form method="post" data-action-type="activar" id="activar-form-{{ usuario.id }}">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
                                         <input type="hidden" name="action" value="activar">
                                         <button type="submit" class="btn btn-success btn-sm" data-action="Activar" title="Activar Usuario"><i class="bi bi-check-circle"></i></button>
                                     </form>
+                                    {% endif %}
+
+                                    <!-- Enlace Editar -->
+                                    <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
                                 {% endif %}
-                                <!-- Enlace Editar (sin cambios de permiso) -->
-                                <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
                             </td>
                         </tr>
                     {% empty %} {# Añadido para el caso sin usuarios #}
@@ -151,35 +128,10 @@
         </div> <!-- Fin table-responsive -->
        
     </div> <!-- Fin container -->
-    <div class="mt-3 text-center">
-        <a href="{% url 'usuarios:panel_administrativo' %}" class="btn btn-secondary">Volver al Panel</a>
-   </div>
     <!-- Scripts -->
     <script src="{% static 'js/mensajes_confirmacion_administracion_usuarios.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Código existente para el logout si lo tienes aquí (mejor moverlo a otro archivo JS si es complejo)
-             document.getElementById('logoutButton').addEventListener('click', function(event) {
-                event.preventDefault();
-                document.getElementById('logoutForm').submit();
-            });
-
-            // === Nuevo código para los formularios de acción de usuario ===
-            // Selecciona todos los formularios dentro de las celdas de acciones (<td> con clase action-buttons)
-            const actionForms = document.querySelectorAll('td.action-buttons form');
-
-            actionForms.forEach(form => {
-                form.addEventListener('submit', function(event) {
-                    // Obtiene el tipo de acción del atributo data-action-type del formulario
-                    const actionType = this.getAttribute('data-action-type');
-                    // Llama a la función de SweetAlert2
-                    mostrarConfirmacion(event, actionType);
-                });
-            });
-            // === Fin nuevo código ===
-        });
-    </script>
+    <script src="{% static 'js/administracion_usuarios.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+.permiso-personalizado {
+    outline: 2px solid #ff9800 !important;
+    box-shadow: 0 0 8px #ff9800;
+    background: #fffbe6;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    padding: 2px 6px;
+}
+</style>
+<div class="container mt-5">
+    <div class="card p-4 shadow">
+        <h2 class="mb-4 text-center">Editar Rol: {{ rol.nombre_rol }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="{% url 'roles:listar_roles' %}" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

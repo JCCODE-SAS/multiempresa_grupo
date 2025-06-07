@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    /* Estilos específicos para la tabla de roles para anular reglas globales */
+    .roles-table-container .table-responsive {
+        /* Restauramos el comportamiento por defecto de Bootstrap para scroll horizontal */
+        display: block; 
+        overflow-x: auto; /* Habilita el scroll horizontal si la tabla es muy ancha */
+    }
+    
+    .roles-table-container .table {
+        /* Eliminamos el ancho mínimo forzado y permitimos que la tabla se ajuste */
+        min-width: auto; 
+        width: 100%; /* La tabla ocupará el 100% del contenedor disponible */
+        font-size: 0.95rem; /* Ajuste ligeramente la fuente para que quepa mejor */
+    }
+
+    /* Aseguramos que la columna de acciones no se parta y ocupe el mínimo espacio */
+    .roles-table-container .table .col-acciones {
+        white-space: nowrap; /* Evita saltos de línea dentro de la celda */
+        width: 1%; /* Intenta que la columna ocupe solo el espacio necesario */
+    }
+
+    /* Estilos para badges, para que no se peguen mucho */
+    .roles-table-container .badge.bg-secondary {
+        margin-right: 4px; /* Espacio a la derecha de cada badge */
+        margin-bottom: 4px; /* Espacio debajo de cada badge */
+        display: inline-block; /* Asegura que los márgenes funcionen correctamente */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 roles-table-container"> 
+    <div class="card p-4 shadow">
+        <h2 class="mb-4 text-center">Roles del Sistema</h2>
+        <a href="{% url 'roles:crear_rol' %}" class="btn btn-primary mb-3">Crear Nuevo Rol</a>
+
+        <div class="table-responsive"> {# Este div es crucial para el scroll horizontal #}
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Permisos</th>
+                        <th class="text-center">Acciones</th> {# Centramos el texto del encabezado #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rol in roles %}
+                    <tr>
+                        <td>{{ rol.nombre_rol }}</td>
+                        <td>{{ rol.descripcion_rol }}</td>
+                        <td>
+                            {% for permiso in rol.permisos.all %}
+                                <span class="badge bg-secondary">{{ permiso.verbose_name|capfirst }}</span>
+                            {% empty %}
+                                <span class="text-muted">Sin permisos</span>
+                            {% endfor %}
+                        </td>
+                        
+                        <td class="text-center col-acciones"> {# Aplicamos la clase a la celda #}
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Acciones
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end"> {# Alinea el dropdown a la derecha #}
+                                    <li><a class="dropdown-item" href="{% url 'roles:editar_rol' rol.id_rol %}">Editar</a></li>
+                                    <li><hr class="dropdown-divider"></li> {# Separador opcional #}
+                                    <li><a class="dropdown-item text-danger" href="{% url 'roles:eliminar_rol' rol.id_rol %}">Eliminar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

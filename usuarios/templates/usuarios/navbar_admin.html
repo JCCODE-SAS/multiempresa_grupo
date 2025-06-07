@@ -1,0 +1,49 @@
+<!-- navbar_admin.html: Navbar modular para administración de usuarios -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+        {% if request.resolver_match.url_name == 'panel_administrativo' %}
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <i class="bi bi-people-fill me-2" style="font-size: 1.5rem;"></i>
+            Panel de Control Administrativo
+        </a>
+        {% else %}
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'usuarios:panel_administrativo' %}">
+            <i class="bi bi-arrow-left-circle me-2" style="font-size: 1.5rem;"></i>
+             Volver al panel de Control Administrativo
+        </a>
+        {% endif %}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center gap-3">
+                <li class="nav-item">
+                    <span class="nav-link text-light">
+                        <i class="bi bi-person-circle me-1"></i>
+                        {{ user.username }}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link text-light" id="navbar-fecha">
+                        <i class="bi bi-calendar-event me-1"></i>
+                        <span id="fecha-actual">--/--/----</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link text-light" id="navbar-hora">
+                        <i class="bi bi-clock me-1"></i>
+                        <span id="hora-actual">--:--:--</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'usuarios:logout' %}" id="logoutForm" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link text-danger" id="logoutButton" title="Cerrar sesión">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

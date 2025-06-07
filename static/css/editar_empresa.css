@@ -1,0 +1,11 @@
+/* Personalización específica para editar_empresa.html */
+.btn.btn-secondary {
+    background-color: #a86e17 !important;
+    border-color: #a86e17 !important;
+    color: #fff !important;
+}
+.btn.btn-secondary:hover {
+    background-color: #7a4c0e !important;
+    border-color: #7a4c0e !important;
+    color: #fff !important;
+}

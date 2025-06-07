@@ -1,0 +1,14 @@
+/* Personalización específica para listar_empresas.html */
+/* Puedes agregar aquí estilos personalizados si lo necesitas. El diseño base ya está en styles.css */
+
+.btn-buscar {
+    background-color: #fff !important;
+    color: #7a4c0e !important;
+    border-color: #f7a130 !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+.btn-buscar:hover, .btn-buscar:focus {
+    background-color: #7a4c0e  !important;
+    color: #fff !important;
+    border-color: #7a4c0e !important;
+}

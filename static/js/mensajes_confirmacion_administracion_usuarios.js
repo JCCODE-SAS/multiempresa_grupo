@@ -34,7 +34,7 @@ function mostrarConfirmacion(event, action) {
         text: mensaje,
         icon: icon,
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: '#a86e17',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, continuar',
         cancelButtonText: 'Cancelar'

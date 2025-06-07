@@ -1,13 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from empresas.models import Empresa
 
+@login_required
 def lista_empresas(request):
     empresas = Empresa.objects.all()
     return render(request, 'admin_empresas/lista_empresas.html', {'empresas': empresas})
 
 @login_required
+@permission_required('usuarios.puede_editar_empresa', raise_exception=True)
 def editar_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id=empresa_id)
     cambio_exitoso = False  # Variable para controlar el mensaje de éxito
@@ -24,10 +26,15 @@ def editar_empresa(request, empresa_id):
         empresa.save()
         cambio_exitoso = True  # Indicar que el cambio fue exitoso
 
-    return render(request, 'admin_empresas/editar_empresa.html', {'empresa': empresa, 'cambio_exitoso': cambio_exitoso})
+    return render(request, 'admin_empresas/editar_empresa.html', {
+        'empresa': empresa,
+        'cambio_exitoso': cambio_exitoso
+    })
 
+@login_required
+@permission_required('usuarios.puede_activar_desactivar_empresa', raise_exception=True)
 def toggle_estado_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id=empresa_id)
-    empresa.is_active = not empresa.is_active # Asegúrate de tener un campo booleano `activa`
+    empresa.is_active = not empresa.is_active # Asegúrate de tener un campo booleano `is_active`
     empresa.save()
     return redirect('admin_empresas:lista_empresas')

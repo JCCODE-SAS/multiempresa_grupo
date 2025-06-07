@@ -24,3 +24,34 @@ class EmailBackend(ModelBackend):
             return Usuario.objects.get(pk=user_id) # Si se encuentra un usuario, lo devuelve.
         except Usuario.DoesNotExist:    # Si no se encuentra un usuario, devuelve None.
             return None
+
+class RolPermisosBackend(ModelBackend):
+    def has_perm(self, user_obj, perm, obj=None):
+        # Permisos directos y de grupos (Django default)
+        if super().has_perm(user_obj, perm, obj):
+            return True
+        # Permisos por rol personalizado
+        if hasattr(user_obj, 'rol') and user_obj.rol:
+            return user_obj.rol.permisos.filter(
+                codename=perm.split('.')[-1],
+                content_type__app_label=perm.split('.')[0]
+            ).exists()
+        return False
+
+    def get_all_permissions(self, user_obj, obj=None):
+        perms = set(super().get_all_permissions(user_obj, obj))
+        if hasattr(user_obj, 'rol') and user_obj.rol:
+            perms.update(
+                f"{p.content_type.app_label}.{p.codename}"
+                for p in user_obj.rol.permisos.all()
+            )
+        return perms
+
+    def get_group_permissions(self, user_obj, obj=None):
+        perms = set(super().get_group_permissions(user_obj, obj))
+        if hasattr(user_obj, 'rol') and user_obj.rol:
+            perms.update(
+                f"{p.content_type.app_label}.{p.codename}"
+                for p in user_obj.rol.permisos.all()
+            )
+        return perms

@@ -57,7 +57,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'usuarios.Usuario'  # Cambia el modelo de usuario por defecto de Django
 
 AUTHENTICATION_BACKENDS = [ # Configura los backends de autenticación
-    'usuarios.backends.EmailBackend',  # Agrega tu backend personalizado aquí
+    'usuarios.backends.RolPermisosBackend',  # Backend de permisos por rol
+    'usuarios.backends.EmailBackend',        # Backend de autenticación por email
     'django.contrib.auth.backends.ModelBackend',  # Mantén el backend por defecto de Django
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Configuración para enviar correos electrónicos en consola (para pruebas)
@@ -103,7 +104,7 @@ DATABASES = { # Configura la base de datos de Django
         'ENGINE': 'django.db.backends.mysql',  # Cambiamos SQLite por MySQL
         'NAME': 'multiempresa',  # Nombre de la base de datos en MySQL
         'USER': 'root',       # Usuario de MySQL
-        'PASSWORD': '1983', # Contraseña de MySQL
+        'PASSWORD': '', # Contraseña de MySQL
         'HOST': 'localhost',        # Dirección del servidor MySQL (usa IP si es remoto)
         'PORT': '3306',             # Puerto de MySQL (3306 por defecto)
         'OPTIONS':{         # Opciones adicionales de MySQL
