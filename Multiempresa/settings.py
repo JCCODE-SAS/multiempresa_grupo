@@ -57,7 +57,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'usuarios.Usuario'  # Cambia el modelo de usuario por defecto de Django
 
 AUTHENTICATION_BACKENDS = [ # Configura los backends de autenticación
-    'usuarios.backends.EmailBackend',  # Agrega tu backend personalizado aquí
+    'usuarios.backends.RolPermisosBackend',  # Backend de permisos por rol
+    'usuarios.backends.EmailBackend',        # Backend de autenticación por email
     'django.contrib.auth.backends.ModelBackend',  # Mantén el backend por defecto de Django
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # Configuración para enviar correos electrónicos en consola (para pruebas)

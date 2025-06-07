@@ -3,9 +3,10 @@ from django.contrib import messages
 from .forms import EmpresaForm
 from .models import Empresa
 from django.db import IntegrityError
-from django.contrib.auth.decorators import login_required # Importar el decorador
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q # Importa Q para búsquedas complejas
 
+@permission_required('usuarios.puede_crear_empresa', raise_exception=True)
 @login_required # Asegura que solo usuarios autenticados puedan acceder a esta vista
 def crear_empresa(request):
     empresa_creada = False  # Variable para controlar si se muestra el modal
@@ -81,3 +82,47 @@ def detalle_empresa(request, empresa_id):
         'empresa': empresa
     }
     return render(request, 'empresas/detalle_empresa.html', context) # Usaremos un nuevo template aquí
+
+@permission_required('usuarios.puede_editar_empresa', raise_exception=True)
+@login_required
+def editar_empresa(request, empresa_id):
+    """
+    Vista para editar una empresa existente.
+    """
+    empresa = get_object_or_404(Empresa, pk=empresa_id)
+    form = EmpresaForm(request.POST or None, instance=empresa)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            email = form.cleaned_data.get('correo_corporativo')
+            telefono = form.cleaned_data.get('telefono')
+            direccion = form.cleaned_data.get('direccion')
+
+            hay_duplicados = False
+
+            # Validaciones personalizadas de duplicados
+            if email and Empresa.objects.filter(correo_corporativo__iexact=email).exclude(pk=empresa_id).exists():
+                form.add_error('correo_corporativo', 'Este correo electrónico ya está registrado.')
+                hay_duplicados = True
+            if telefono and Empresa.objects.filter(telefono=telefono).exclude(pk=empresa_id).exists():
+                form.add_error('telefono', 'Este número de teléfono ya está registrado.')
+                hay_duplicados = True
+            if direccion and Empresa.objects.filter(direccion__iexact=direccion).exclude(pk=empresa_id).exists():
+                form.add_error('direccion', 'Esta dirección ya está registrada.')
+                hay_duplicados = True
+
+            if hay_duplicados:
+                messages.error(request, 'No se pudo actualizar la empresa debido a datos duplicados.')
+            else:
+                form.save()
+                messages.success(request, 'Empresa actualizada exitosamente.')
+                return redirect('detalle_empresa', empresa_id=empresa.id)
+
+        else:
+            messages.error(request, 'Por favor, corrige los errores indicados en el formulario.')
+
+    context = {
+        'form': form,
+        'empresa': empresa
+    }
+    return render(request, 'empresas/editar_empresa.html', context)

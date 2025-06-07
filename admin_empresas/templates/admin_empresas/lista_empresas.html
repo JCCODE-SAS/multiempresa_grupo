@@ -19,6 +19,15 @@
             <div class="col-10 col-xxl-11 col-xl-10">
                 <div class="card p-4 shadow">
                     <h2 class="mb-4 text-center">Empresas Registradas</h2>
+                    {% if messages %}
+                        <div class="mt-2">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} text-center" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle w-100 fs-6">
                             <thead class="table-dark text-center align-middle">
@@ -68,11 +77,22 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
-                                        <a href="{% url 'admin_empresas:editar_empresa' empresa.id %}" class="btn btn-secondary">
-                                            Editar</a>
-                                        <a href="{% url 'admin_empresas:activar_desactivar_empresa' empresa.id %}" class="btn btn-sm btn-secondary mb-1">
-                                            {% if empresa.is_active %}Desactivar{% else %}Activar{% endif %}
-                                        </a>
+                                        {% if perms.usuarios.puede_editar_empresa and not perms.usuarios.puede_activar_desactivar_empresa %}
+                                            <a href="{% url 'admin_empresas:editar_empresa' empresa.id %}" class="btn btn-secondary">Editar</a>
+                                        {% elif perms.usuarios.puede_activar_desactivar_empresa and not perms.usuarios.puede_editar_empresa %}
+                                            <a href="{% url 'admin_empresas:activar_desactivar_empresa' empresa.id %}" class="btn btn-sm btn-secondary mb-1">
+                                                {% if empresa.is_active %}Desactivar{% else %}Activar{% endif %}
+                                            </a>
+                                        {% elif perms.usuarios.puede_editar_empresa and perms.usuarios.puede_activar_desactivar_empresa %}
+                                            <a href="{% url 'admin_empresas:editar_empresa' empresa.id %}" class="btn btn-secondary">Editar</a>
+                                            <a href="{% url 'admin_empresas:activar_desactivar_empresa' empresa.id %}" class="btn btn-sm btn-secondary mb-1">
+                                                {% if empresa.is_active %}Desactivar{% else %}Activar{% endif %}
+                                            </a>
+                                        {% else %}
+                                            <button class="btn btn-secondary" disabled title="Sin permisos para editar o activar/desactivar">
+                                                Editar / Activar / Desactivar
+                                            </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

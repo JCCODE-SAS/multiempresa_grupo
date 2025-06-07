@@ -74,50 +74,48 @@
                                 {% endif %}
                             </td>
                             <td class="action-buttons">
-                                <!-- Formulario Cambiar Rol (sin cambios de permiso) -->
-                                <form method="post" data-action-type="cambiar_rol"> {# Elimina onsubmit, añade data-action-type #}
-                                    {% csrf_token %}
-                                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                                    <select name="nuevo_rol" class="form-select form-select-sm d-inline-block" title="Cambiar Rol" style="width: auto;"> <!-- Estilo para select -->
-                                        {% for rol in roles %}
-                                            <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol" title="Guardar Cambios "><i class="bi bi-pencil-square"></i></button>
-                                </form>
+                                {% if perms.usuarios.puede_gestionar_usuarios %}
+                                    <!-- Formulario Cambiar Rol -->
+                                    <form method="post" data-action-type="cambiar_rol">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <select name="nuevo_rol" class="form-select form-select-sm d-inline-block" title="Cambiar Rol" style="width: auto;">
+                                            {% for rol in roles %}
+                                                <option value="{{ rol.id_rol }}" {% if usuario.rol == rol %}selected{% endif %}>{{ rol.nombre_rol }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" name="action" value="cambiar_rol" class="btn btn-warning btn-sm" data-action="Cambiar Rol" title="Guardar Cambios "><i class="bi bi-pencil-square"></i></button>
+                                    </form>
 
-                                
-
-                                {% if usuario.is_active %}
-                                    <!-- Formulario Desactivar (sin cambios de permiso) -->
+                                    {% if usuario.is_active %}
+                                    <!-- Formulario Desactivar -->
                                     <form method="post" data-action-type="desactivar">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
                                         <button type="submit" name="action" value="desactivar" class="btn btn-danger btn-sm" data-action="Desactivar" title="Desactivar Usuario"><i class="bi bi-stop-circle"></i></button>
                                     </form>
-
-                                    <!-- Formulario Archivar (CON CAMPO MOTIVO AÑADIDO) -->
+                                    <!-- Formulario Archivar -->
                                     <form method="post" data-action-type="archivar">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                                        <!-- === CAMPO MOTIVO AÑADIDO AQUÍ === -->
                                         <input type="text" name="motivo_archivo" placeholder="Motivo..." class="form-control form-control-sm archive-reason-input" required title="Motivo del archivo">
-                                        <!-- === FIN CAMPO MOTIVO === -->
                                         <button type="submit" name="action" value="archivar" class="btn btn-dark btn-sm" data-action="Archivar" title="Archivar Usuario"><i class="bi bi-archive"></i></button>
                                     </form>
-                                {% endif %}
+                                    {% endif %}
 
-                                {% if not usuario.is_active %}
-                                    <!-- Formulario Activar (sin cambios de permiso) -->
+                                    {% if not usuario.is_active %}
+                                    <!-- Formulario Activar -->
                                     <form method="post" data-action-type="activar" id="activar-form-{{ usuario.id }}">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ usuario.id }}">
                                         <input type="hidden" name="action" value="activar">
                                         <button type="submit" class="btn btn-success btn-sm" data-action="Activar" title="Activar Usuario"><i class="bi bi-check-circle"></i></button>
                                     </form>
+                                    {% endif %}
+
+                                    <!-- Enlace Editar -->
+                                    <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
                                 {% endif %}
-                                <!-- Enlace Editar (sin cambios de permiso) -->
-                                <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-info btn-sm" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
                             </td>
                         </tr>
                     {% empty %} {# Añadido para el caso sin usuarios #}

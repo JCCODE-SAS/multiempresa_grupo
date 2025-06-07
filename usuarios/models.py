@@ -53,11 +53,17 @@ class Usuario(AbstractUser, PermissionsMixin):
         verbose_name = "Usuario del Sistema"    # Nombre en singular para el modelo en el panel de administración.
         verbose_name_plural = "Usuarios del Sistema" # Nombre en plural para el modelo en el panel de administración.
         permissions = [
-            ("can_access_user_administration", "Can access user administration page"),# --- PERMISO PARA ACCEDER A LA VISTA ---
-            ("can_view_usuario_custom", "Can view usuario custom"), #permiso para ver un usuario
-            ("can_change_usuario_status", "Can change usuario status"), #permiso para cambiar el estado de un usuario
-            ("can_change_usuario_rol", "Can change usuario rol"), #permiso para cambiar el rol de un usuario 
-            ("can_archive_usuario", "Can archive usuario"),  #permiso para archivar usuarios
+            ("puede_crear_empresa", "Puede crear empresa"),
+            ("puede_editar_empresa", "Puede editar empresa"),
+            ("puede_activar_desactivar_empresa", "Puede activar/desactivar empresa"),
+            ("puede_ver_empresa", "Puede ver información de empresa"),
+            ("puede_cambiar_rol_usuario", "Puede cambiar el rol de usuario"),
+            ("puede_activar_desactivar_usuario", "Puede activar/desactivar usuario"),
+            ("puede_archivar_usuario", "Puede archivar usuario"),
+            ("puede_editar_usuario", "Puede editar usuario"),
+            ("puede_crear_rol", "Puede crear rol"),
+            ("puede_editar_rol", "Puede editar rol"),
+            ("puede_eliminar_rol", "Puede eliminar rol"),
         ]
     def __str__(self):
         return self.username    # Devuelve el nombre de usuario como representación en cadena del objeto.

@@ -28,4 +28,5 @@ urlpatterns = [
     path('usuarios/login/', usuarios_views.login_view, name='login'),
     path('empresas/', include('empresas.urls', namespace='empresas')),  # Incluye las URLs de la aplicación 'empresas'
     path('admin-empresas/', include('admin_empresas.urls', namespace='admin_empresas')),
+    path('roles/', include('roles.urls', namespace='roles')),
 ]
